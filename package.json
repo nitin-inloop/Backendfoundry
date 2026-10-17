@@ -18,6 +18,8 @@
     "validate:registry": "node scripts/validate-registry.mjs",
     "check": "node scripts/build-packages.mjs && node scripts/lint-check.mjs --typecheck && node scripts/run-tests.mjs",
     "cli": "node packages/cli/dist/index.cjs",
+    "publish:dry-run": "pnpm publish -r --dry-run --no-git-checks",
+    "publish:packages": "pnpm publish -r --access public --no-git-checks",
     "dev:docs": "pnpm --filter @backendfoundry/docs dev",
     "build:docs": "pnpm --filter @backendfoundry/docs build"
   },

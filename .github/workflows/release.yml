@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Run npm publish --dry-run"
+        description: "Run npm publish --dry-run (set to false for actual publish)"
         required: true
         default: "true"
 
@@ -16,18 +16,25 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
           registry-url: "https://registry.npmjs.org"
-      - name: Build and Test
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build, Lint & Test
+        run: pnpm run check
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          node scripts/build-packages.mjs
-          node scripts/lint-check.mjs
-          node scripts/run-tests.mjs
-      - name: Publish (Dry Run by default)
-        run: |
-          for pkg in core validation errors rate-limit retry circuit-breaker cache idempotency webhooks health logger ai cli; do
-            echo "Packing packages/$pkg..."
-            npm pack ./packages/$pkg --dry-run
-          done
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "Performing dry run publish..."
+            pnpm publish -r --dry-run --no-git-checks
+          else
+            echo "Publishing packages to npm..."
+            pnpm publish -r --access public --no-git-checks
+          fi
