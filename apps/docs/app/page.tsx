@@ -80,38 +80,38 @@ export default function HomePage() {
       {/* Hero */}
       <section aria-labelledby="hero-title" className="relative -mt-16 overflow-hidden bg-[#06090e] pt-16">
         <HeroBackdrop />
-        <Container className="relative pb-16 pt-12 md:pb-24 md:pt-20 lg:pt-24">
-          <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-8">
+        <Container className="relative pb-20 pt-10 md:pb-28 md:pt-16 lg:pt-20">
+          <div className="grid items-start gap-8 lg:grid-cols-12 lg:gap-8">
             {/* Left Content Column */}
             <div className="lg:col-span-7">
               <div className="bf-rise">
                 <Link
                   href="/changelog"
-                  className="group inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/40 py-1 pl-2.5 pr-3 text-caption text-emerald-300 shadow-sm backdrop-blur-md transition-all hover:border-emerald-500/50 hover:bg-emerald-900/40"
+                  className="group inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/40 py-0.5 pl-2 pr-2.5 text-[11.5px] text-emerald-300 shadow-sm backdrop-blur-md transition-all hover:border-emerald-500/50 hover:bg-emerald-900/40"
                 >
-                  <span className="flex h-2 w-2 items-center justify-center">
+                  <span className="flex h-1.5 w-1.5 items-center justify-center">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   </span>
                   <span className="font-semibold text-emerald-300">v1.0</span>
                   <span className="text-emerald-500/60">•</span>
-                  <span className="text-emerald-100/90 font-normal">
+                  <span className="font-normal text-emerald-100/90">
                     New: AI, Idempotency, Rate Limit & Cache – {count} components
                   </span>
-                  <ArrowRight className="h-3.5 w-3.5 text-emerald-400 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                  <ArrowRight className="h-3 w-3 text-emerald-400 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                 </Link>
               </div>
 
               <div className="bf-rise [animation-delay:60ms]">
                 <h1
                   id="hero-title"
-                  className="mt-6 text-balance text-4xl font-semibold leading-[1.06] tracking-[-1.5px] text-white sm:text-5xl lg:text-[54px] xl:text-[62px]"
+                  className="mt-5 max-w-[520px] text-balance text-[30px] font-semibold leading-[1.12] tracking-[-1.2px] text-white sm:text-[38px] lg:text-[42px]"
                 >
                   Backend primitives forged for production TypeScript
                 </h1>
               </div>
 
               <div className="bf-rise [animation-delay:120ms]">
-                <p className="mt-5 max-w-[560px] text-pretty text-subtitle text-zinc-300 leading-relaxed">
+                <p className="mt-4 max-w-[490px] text-pretty text-[14px] leading-relaxed text-zinc-300 sm:text-[15px]">
                   {count} modular backend components across 5 collections. Copy the source with
                   one CLI command or import the package — every component is typed, SSR-safe,
                   and respects zero runtime dependencies.
@@ -119,16 +119,16 @@ export default function HomePage() {
               </div>
 
               <div className="bf-rise [animation-delay:180ms]">
-                <div className="mt-8 flex flex-wrap items-center gap-3.5">
+                <div className="mt-7 flex flex-wrap items-center gap-3">
                   <Link
                     href="/packages"
-                    className="inline-flex h-11 items-center justify-center rounded-lg bg-white px-6 text-sm font-semibold text-neutral-950 shadow-sm transition-all hover:bg-neutral-100 hover:shadow-md"
+                    className="inline-flex h-9 sm:h-10 items-center justify-center rounded-md bg-white px-4 sm:px-5 text-[13px] sm:text-sm font-semibold text-neutral-950 shadow-sm transition-all hover:bg-neutral-100 hover:shadow-md"
                   >
                     Explore {count} Components
                   </Link>
                   <Link
                     href="/changelog"
-                    className="inline-flex h-11 items-center justify-center rounded-lg border border-white/15 bg-white/[0.08] px-6 text-sm font-medium text-white shadow-sm backdrop-blur-md transition-all hover:border-white/30 hover:bg-white/[0.14]"
+                    className="inline-flex h-9 sm:h-10 items-center justify-center rounded-md border border-white/15 bg-white/[0.08] px-4 sm:px-5 text-[13px] sm:text-sm font-medium text-white shadow-sm backdrop-blur-md transition-all hover:border-white/30 hover:bg-white/[0.14]"
                   >
                     What's new in v1.0
                   </Link>
@@ -137,13 +137,13 @@ export default function HomePage() {
             </div>
 
             {/* Right Terminal Column */}
-            <div className="bf-rise [animation-delay:200ms] lg:col-span-5">
+            <div className="bf-rise lg:col-span-5 lg:pt-1 [animation-delay:200ms]">
               <HeroTerminal />
             </div>
           </div>
 
           {/* Interactive Pipeline Trace Showcase */}
-          <div className="bf-rise mx-auto mt-20 max-w-[1080px] [animation-delay:280ms] [animation-duration:900ms] md:mt-28">
+          <div className="bf-rise mx-auto mt-24 max-w-[1080px] [animation-delay:280ms] [animation-duration:900ms] md:mt-36">
             <div className="mb-4 flex items-center justify-between px-2">
               <div className="flex items-center gap-2 text-caption text-zinc-400">
                 <span className="h-2 w-2 rounded-full bg-brand-green" />

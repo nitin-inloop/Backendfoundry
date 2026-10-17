@@ -11,7 +11,7 @@ export function HeroBackdrop({ className }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none absolute inset-0 overflow-hidden [mask-image:linear-gradient(to_bottom,black_82%,transparent)] ${className || ""}`}
+      className={`pointer-events-none absolute inset-x-0 top-0 h-[680px] sm:h-[720px] lg:h-[760px] overflow-hidden [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] ${className || ""}`}
     >
       <div className="absolute inset-0 animate-ken-burns">
         <Image
@@ -21,7 +21,7 @@ export function HeroBackdrop({ className }: { className?: string }) {
           priority
           placeholder="blur"
           sizes="100vw"
-          className="object-cover object-[50%_38%]"
+          className="object-cover object-[50%_35%]"
         />
       </div>
 
