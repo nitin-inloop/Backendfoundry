@@ -1,0 +1,69 @@
+{
+  "name": "@backendfoundry/rate-limit",
+  "version": "1.0.0",
+  "description": "Sliding-window and fixed-window rate limiting with standard IETF/X-RateLimit headers, per-route and per-tenant keys, in-memory local store, and atomic Redis Lua adapter.",
+  "keywords": [
+    "backendfoundry",
+    "backend",
+    "nodejs",
+    "typescript",
+    "rate-limit",
+    "rate-limiter",
+    "sliding-window",
+    "throttle",
+    "redis",
+    "express",
+    "fastify"
+  ],
+  "license": "MIT",
+  "author": "BackendFoundry Contributors",
+  "homepage": "https://backendfoundry.dev/packages/rate-limit",
+  "bugs": {
+    "url": "https://github.com/nitin-inloop/Backendfoundry/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nitin-inloop/Backendfoundry.git",
+    "directory": "packages/rate-limit"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "scripts": {
+    "build": "node ../../scripts/build-packages.mjs --only rate-limit",
+    "test": "node --test test/index.test.mjs"
+  },
+  "dependencies": {
+    "@backendfoundry/core": "workspace:*",
+    "@backendfoundry/errors": "workspace:*"
+  },
+  "peerDependencies": {
+    "ioredis": "^5.4.1"
+  },
+  "peerDependenciesMeta": {
+    "ioredis": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

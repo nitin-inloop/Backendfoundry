@@ -1,0 +1,57 @@
+{
+  "name": "@backendfoundry/circuit-breaker",
+  "version": "1.0.0",
+  "description": "Deterministic CLOSED / OPEN / HALF_OPEN state machine that fast-fails degraded dependencies, limits concurrent recovery probes, and emits state-change telemetry.",
+  "keywords": [
+    "backendfoundry",
+    "backend",
+    "nodejs",
+    "typescript",
+    "circuit-breaker",
+    "resilience",
+    "fault-tolerance",
+    "reliability"
+  ],
+  "license": "MIT",
+  "author": "BackendFoundry Contributors",
+  "homepage": "https://backendfoundry.dev/packages/circuit-breaker",
+  "bugs": {
+    "url": "https://github.com/nitin-inloop/Backendfoundry/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nitin-inloop/Backendfoundry.git",
+    "directory": "packages/circuit-breaker"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "scripts": {
+    "build": "node ../../scripts/build-packages.mjs --only circuit-breaker",
+    "test": "node --test test/index.test.mjs"
+  },
+  "dependencies": {
+    "@backendfoundry/core": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

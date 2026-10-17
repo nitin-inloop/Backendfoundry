@@ -1,0 +1,58 @@
+{
+  "name": "@backendfoundry/errors",
+  "version": "1.0.0",
+  "description": "Typed HTTP application errors, machine-readable error categories, credential-scrubbing normalizer, and Express/Fastify error-handling adapters.",
+  "keywords": [
+    "backendfoundry",
+    "backend",
+    "nodejs",
+    "typescript",
+    "errors",
+    "http-errors",
+    "error-handler",
+    "express",
+    "fastify"
+  ],
+  "license": "MIT",
+  "author": "BackendFoundry Contributors",
+  "homepage": "https://backendfoundry.dev/packages/errors",
+  "bugs": {
+    "url": "https://github.com/nitin-inloop/Backendfoundry/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nitin-inloop/Backendfoundry.git",
+    "directory": "packages/errors"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "scripts": {
+    "build": "node ../../scripts/build-packages.mjs --only errors",
+    "test": "node --test test/index.test.mjs"
+  },
+  "dependencies": {
+    "@backendfoundry/core": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

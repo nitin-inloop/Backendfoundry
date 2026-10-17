@@ -1,0 +1,57 @@
+{
+  "name": "@backendfoundry/cli",
+  "version": "1.0.0",
+  "description": "shadcn-style CLI for BackendFoundry: list, inspect, and add backend components (rate limiting, retries, circuit breakers, caching, idempotency, webhooks, and more) to any Node.js project.",
+  "keywords": [
+    "backendfoundry",
+    "backend",
+    "nodejs",
+    "typescript",
+    "cli",
+    "shadcn",
+    "scaffold",
+    "components",
+    "registry"
+  ],
+  "license": "MIT",
+  "author": "BackendFoundry Contributors",
+  "homepage": "https://backendfoundry.dev",
+  "bugs": {
+    "url": "https://github.com/nitin-inloop/Backendfoundry/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nitin-inloop/Backendfoundry.git",
+    "directory": "packages/cli"
+  },
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "backendfoundry": "./dist/index.cjs"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "scripts": {
+    "build": "node ../../scripts/build-packages.mjs --only cli",
+    "test": "node --test test/index.test.mjs"
+  },
+  "dependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
+}

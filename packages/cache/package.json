@@ -1,0 +1,66 @@
+{
+  "name": "@backendfoundry/cache",
+  "version": "1.0.0",
+  "description": "Explicitly scoped key-value caching with TTL management, in-memory and Redis adapters, safe JSON serialization boundaries, prefix invalidation, and stampede-coalesced getOrSet().",
+  "keywords": [
+    "backendfoundry",
+    "backend",
+    "nodejs",
+    "typescript",
+    "cache",
+    "ttl",
+    "stampede",
+    "redis",
+    "memoize"
+  ],
+  "license": "MIT",
+  "author": "BackendFoundry Contributors",
+  "homepage": "https://backendfoundry.dev/packages/cache",
+  "bugs": {
+    "url": "https://github.com/nitin-inloop/Backendfoundry/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nitin-inloop/Backendfoundry.git",
+    "directory": "packages/cache"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "scripts": {
+    "build": "node ../../scripts/build-packages.mjs --only cache",
+    "test": "node --test test/index.test.mjs"
+  },
+  "dependencies": {
+    "@backendfoundry/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "ioredis": "^5.4.1"
+  },
+  "peerDependenciesMeta": {
+    "ioredis": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

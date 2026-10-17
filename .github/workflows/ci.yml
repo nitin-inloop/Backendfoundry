@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    name: Build, Lint & Test (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [18.x, 20.x, 22.x]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Build all packages (ESM, CJS, d.ts)
+        run: node scripts/build-packages.mjs
+
+      - name: Run Lint & Registry Validation
+        run: node scripts/lint-check.mjs
+
+      - name: Run Unit & Ecosystem Integration Tests
+        run: node scripts/run-tests.mjs
+
+      - name: Verify CLI Commands
+        run: |
+          node packages/cli/dist/index.cjs list
+          node packages/cli/dist/index.cjs info retry

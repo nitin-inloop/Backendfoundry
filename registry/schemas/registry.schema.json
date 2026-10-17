@@ -1,0 +1,202 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://backendfoundry.dev/schemas/registry.schema.json",
+  "title": "BackendFoundry Component Registry",
+  "description": "Single source of truth for every BackendFoundry backend component. Consumed by the CLI, the docs site, the playground and the build/lint tooling.",
+  "type": "object",
+  "required": ["brand", "packages"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "brand": {
+      "type": "object",
+      "required": ["name", "tagline", "namespace", "version", "license", "categories", "cli"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "tagline": { "type": "string", "minLength": 1 },
+        "namespace": { "type": "string", "pattern": "^@[a-z0-9-]+$" },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+" },
+        "license": { "type": "string" },
+        "publicationStatus": { "type": "string" },
+        "categories": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "cli": {
+          "type": "object",
+          "required": ["package", "bin", "defaultTargetDir"],
+          "properties": {
+            "package": { "type": "string" },
+            "bin": { "type": "string" },
+            "defaultTargetDir": { "type": "string" }
+          }
+        }
+      }
+    },
+    "packages": {
+      "type": "array",
+      "minItems": 12,
+      "items": { "$ref": "#/definitions/component" }
+    }
+  },
+  "definitions": {
+    "component": {
+      "type": "object",
+      "required": [
+        "id",
+        "slug",
+        "name",
+        "packageName",
+        "displayName",
+        "category",
+        "directory",
+        "version",
+        "description",
+        "install",
+        "usage",
+        "registryDependencies",
+        "files",
+        "playground",
+        "dependencies",
+        "supportedFrameworks",
+        "runtimeRequirements",
+        "entryPoints",
+        "docsRoute",
+        "hasPlayground",
+        "cli",
+        "exportedApis",
+        "configSchema",
+        "securityNotes",
+        "limitations",
+        "examples"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "name": { "type": "string", "minLength": 1 },
+        "packageName": { "type": "string", "pattern": "^@backendfoundry/[a-z0-9-]+$" },
+        "displayName": { "type": "string", "minLength": 1 },
+        "category": { "type": "string", "minLength": 1 },
+        "directory": { "type": "string", "pattern": "^packages/[a-z0-9-]+$" },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+" },
+        "description": { "type": "string", "minLength": 10 },
+        "install": {
+          "type": "object",
+          "required": ["npm", "pnpm", "yarn", "cli"],
+          "properties": {
+            "npm": { "type": "string" },
+            "pnpm": { "type": "string" },
+            "yarn": { "type": "string" },
+            "cli": { "type": "string" }
+          }
+        },
+        "usage": { "type": "string", "minLength": 10 },
+        "registryDependencies": { "type": "array", "items": { "type": "string" } },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["path", "target"],
+            "properties": {
+              "path": { "type": "string" },
+              "target": { "type": "string" }
+            }
+          }
+        },
+        "playground": { "$ref": "#/definitions/playground" },
+        "dependencies": { "type": "object" },
+        "optionalDependencies": { "type": "object" },
+        "supportedFrameworks": { "type": "array", "items": { "type": "string" } },
+        "runtimeRequirements": { "type": "string" },
+        "entryPoints": {
+          "type": "object",
+          "required": ["esm", "cjs", "types"],
+          "properties": {
+            "esm": { "type": "string" },
+            "cjs": { "type": "string" },
+            "types": { "type": "string" }
+          }
+        },
+        "docsRoute": { "type": "string", "pattern": "^/packages/[a-z0-9-]+$" },
+        "hasPlayground": { "type": "boolean" },
+        "cli": {
+          "type": "object",
+          "required": ["npmInstall", "sourceAddSupported", "sourceAddReason"],
+          "properties": {
+            "npmInstall": { "type": "boolean" },
+            "sourceAddSupported": { "type": "boolean" },
+            "sourceAddReason": { "type": "string" },
+            "targetFile": { "type": ["string", "null"] }
+          }
+        },
+        "exportedApis": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "kind", "signature", "description"],
+            "properties": {
+              "name": { "type": "string" },
+              "kind": { "type": "string", "enum": ["class", "function", "object", "const", "type", "interface", "middleware"] },
+              "signature": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "configSchema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["option", "type", "description"],
+            "properties": {
+              "option": { "type": "string" },
+              "type": { "type": "string" },
+              "default": { "type": "string" },
+              "required": { "type": "boolean" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "errorBehavior": { "type": "string" },
+        "securityNotes": { "type": "array", "items": { "type": "string" } },
+        "limitations": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "object" },
+        "examples": {
+          "type": "object",
+          "required": ["basic"],
+          "properties": {
+            "basic": { "type": "string" },
+            "express": { "type": "string" },
+            "fastify": { "type": "string" },
+            "nextjs": { "type": "string" }
+          }
+        }
+      }
+    },
+    "playground": {
+      "type": "object",
+      "required": ["scenario", "title", "description", "inputs"],
+      "properties": {
+        "scenario": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["key", "label", "type", "default"],
+            "properties": {
+              "key": { "type": "string", "pattern": "^[a-zA-Z][a-zA-Z0-9]*$" },
+              "label": { "type": "string" },
+              "type": { "type": "string", "enum": ["text", "textarea", "number", "boolean", "select", "json"] },
+              "default": { "type": ["string", "number", "boolean"] },
+              "min": { "type": "number" },
+              "max": { "type": "number" },
+              "step": { "type": "number" },
+              "options": { "type": "array", "items": { "type": "string" } },
+              "help": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

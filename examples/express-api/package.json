@@ -1,0 +1,16 @@
+{
+  "name": "@backendfoundry/example-express-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@backendfoundry/core": "workspace:*",
+    "@backendfoundry/validation": "workspace:*",
+    "@backendfoundry/rate-limit": "workspace:*",
+    "@backendfoundry/idempotency": "workspace:*",
+    "@backendfoundry/webhooks": "workspace:*",
+    "@backendfoundry/health": "workspace:*",
+    "@backendfoundry/errors": "workspace:*",
+    "@backendfoundry/logger": "workspace:*"
+  }
+}

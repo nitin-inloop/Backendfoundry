@@ -1,0 +1,1992 @@
+{
+  "$schema": "./schemas/registry.schema.json",
+  "brand": {
+    "name": "BackendFoundry",
+    "tagline": "Backend infrastructure, built in blocks.",
+    "namespace": "@backendfoundry",
+    "version": "1.0.0",
+    "license": "MIT",
+    "publicationStatus": "workspace-local (ready for npm publication)",
+    "categories": [
+      "Foundation",
+      "Security & Validation",
+      "Reliability",
+      "State & Caching",
+      "Observability",
+      "AI Infrastructure"
+    ],
+    "cli": {
+      "package": "@backendfoundry/cli",
+      "bin": "backendfoundry",
+      "defaultTargetDir": "src/lib/backendfoundry"
+    }
+  },
+  "packages": [
+    {
+      "id": "core",
+      "slug": "core",
+      "name": "Core",
+      "packageName": "@backendfoundry/core",
+      "displayName": "Core Primitives",
+      "category": "Foundation",
+      "directory": "packages/core",
+      "version": "1.0.0",
+      "description": "Shared TypeScript types, FoundryError base class, request ID generation/validation, standard API response envelopes, and secret-safe environment variable parsers.",
+      "install": {
+        "npm": "npm install @backendfoundry/core",
+        "pnpm": "pnpm add @backendfoundry/core",
+        "yarn": "yarn add @backendfoundry/core",
+        "cli": "npx @backendfoundry/cli add core"
+      },
+      "usage": "import { extractOrGenerateRequestId, ok, parseEnvInt } from \"@backendfoundry/core\";\n\nconst port = parseEnvInt(\"PORT\", process.env, { defaultValue: 3000, min: 1024, max: 65535 });\nconst requestId = extractOrGenerateRequestId(req.headers);\nreturn ok({ service: \"billing\", port }, { requestId });",
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "packages/core/src/index.ts",
+          "target": "core.ts"
+        }
+      ],
+      "playground": {
+        "scenario": "core-request-envelope",
+        "title": "Request IDs, envelopes & env parsing",
+        "description": "Resolve an incoming x-request-id (or generate a safe one), build a paginated response envelope, and parse environment variables without leaking raw values.",
+        "inputs": [
+          {
+            "key": "incomingRequestId",
+            "label": "Incoming x-request-id header",
+            "type": "text",
+            "default": "req_upstream_7f3a9c",
+            "help": "Try an unsafe value like 'abc<script>' to see it rejected and replaced."
+          },
+          {
+            "key": "prefix",
+            "label": "Generated ID prefix",
+            "type": "text",
+            "default": "api"
+          },
+          {
+            "key": "page",
+            "label": "Page",
+            "type": "number",
+            "default": 2,
+            "min": 1,
+            "max": 1000
+          },
+          {
+            "key": "pageSize",
+            "label": "Page size",
+            "type": "number",
+            "default": 10,
+            "min": 1,
+            "max": 100
+          },
+          {
+            "key": "totalItems",
+            "label": "Total items",
+            "type": "number",
+            "default": 47,
+            "min": 0,
+            "max": 100000
+          },
+          {
+            "key": "env",
+            "label": "Environment variables (JSON)",
+            "type": "json",
+            "default": "{\n  \"PORT\": \"8080\",\n  \"DEBUG\": \"yes\",\n  \"NODE_ENV\": \"staging\",\n  \"DATABASE_URL\": \"\"\n}"
+          }
+        ]
+      },
+      "dependencies": {},
+      "optionalDependencies": {},
+      "supportedFrameworks": [
+        "Express",
+        "Fastify",
+        "Next.js Route Handlers",
+        "Node.js HTTP"
+      ],
+      "runtimeRequirements": "Node.js >= 18.18.0, TypeScript >= 5.0",
+      "entryPoints": {
+        "esm": "./dist/index.js",
+        "cjs": "./dist/index.cjs",
+        "types": "./dist/index.d.ts"
+      },
+      "docsRoute": "/packages/core",
+      "hasPlayground": true,
+      "cli": {
+        "npmInstall": true,
+        "sourceAddSupported": true,
+        "sourceAddReason": "Zero-dependency foundational module safe to vendor directly into application source.",
+        "targetFile": "src/lib/backendfoundry/core.ts"
+      },
+      "exportedApis": [
+        {
+          "name": "FoundryError",
+          "kind": "class",
+          "signature": "new FoundryError(options: FoundryErrorOptions)",
+          "description": "Base operational error with code, statusCode, category, expose flag, and safe JSON serialization."
+        },
+        {
+          "name": "generateRequestId",
+          "kind": "function",
+          "signature": "generateRequestId(prefix?: string): string",
+          "description": "Generates a collision-resistant, URL-safe request correlation ID."
+        },
+        {
+          "name": "extractOrGenerateRequestId",
+          "kind": "function",
+          "signature": "extractOrGenerateRequestId(headers, options?): string",
+          "description": "Validates incoming x-request-id header against injection characters or generates a fresh ID."
+        },
+        {
+          "name": "ok / created / paginated / fail",
+          "kind": "function",
+          "signature": "ok<T>(data: T, meta?: Partial<ApiMeta>, statusCode?: number): ApiSuccessResponse<T>",
+          "description": "Standardized JSON response envelope builders with requestId and pagination metadata."
+        },
+        {
+          "name": "parseEnvString / parseEnvInt / parseEnvBoolean / parseEnvEnum",
+          "kind": "function",
+          "signature": "parseEnvString(key: string, env?, options?): string",
+          "description": "Validates environment variables at startup without leaking raw secret values in exception messages."
+        }
+      ],
+      "configSchema": [
+        {
+          "option": "prefix",
+          "type": "string",
+          "default": "\"req\"",
+          "required": false,
+          "description": "Prefix prepended to generated request IDs."
+        },
+        {
+          "option": "headerName",
+          "type": "string",
+          "default": "\"x-request-id\"",
+          "required": false,
+          "description": "HTTP header inspected for incoming request ID correlation."
+        },
+        {
+          "option": "trustIncoming",
+          "type": "boolean",
+          "default": "true",
+          "required": false,
+          "description": "Whether to preserve valid incoming request IDs from upstream proxies."
+        }
+      ],
+      "errorBehavior": "Throws FoundryError with code ENV_CONFIG_INVALID (HTTP 500, expose: false) when required environment variables are missing or malformed.",
+      "securityNotes": [
+        "Incoming x-request-id headers are validated against /^[a-zA-Z0-9._:-]{6,128}$/ to prevent log injection and header splitting.",
+        "Environment parsers never echo rejected raw values in error messages to prevent accidental secret leakage in crash logs.",
+        "FoundryError.toJSON() redacts error messages and details when statusCode >= 500 unless expose: true is explicitly set."
+      ],
+      "limitations": [
+        "Framework-agnostic by design; does not attach middleware directly (use @backendfoundry/logger or @backendfoundry/errors for HTTP lifecycle hooks)."
+      ],
+      "status": {
+        "build": "passing",
+        "tests": "passing",
+        "publicationStatus": "workspace-ready"
+      },
+      "examples": {
+        "basic": "import { extractOrGenerateRequestId, ok, parseEnvInt } from \"@backendfoundry/core\";\n\nconst port = parseEnvInt(\"PORT\", process.env, { defaultValue: 3000, min: 1024, max: 65535 });\nconst requestId = extractOrGenerateRequestId(req.headers);\nreturn ok({ service: \"billing\", port }, { requestId });",
+        "express": "import { extractOrGenerateRequestId, ok } from \"@backendfoundry/core\";\n\napp.get(\"/v1/status\", (req, res) => {\n  const requestId = extractOrGenerateRequestId(req.headers);\n  res.setHeader(\"x-request-id\", requestId);\n  res.json(ok({ healthy: true }, { requestId }));\n});",
+        "fastify": "import { extractOrGenerateRequestId, ok } from \"@backendfoundry/core\";\n\nfastify.get(\"/v1/status\", async (request, reply) => {\n  const requestId = extractOrGenerateRequestId(request.headers);\n  reply.header(\"x-request-id\", requestId);\n  return ok({ healthy: true }, { requestId });\n});",
+        "nextjs": "import { extractOrGenerateRequestId, ok } from \"@backendfoundry/core\";\nimport { NextResponse } from \"next/server\";\n\nexport async function GET(request: Request) {\n  const headers = Object.fromEntries(request.headers.entries());\n  const requestId = extractOrGenerateRequestId(headers);\n  return NextResponse.json(ok({ runtime: \"nodejs\" }, { requestId }), {\n    headers: { \"x-request-id\": requestId }\n  });\n}"
+      }
+    },
+    {
+      "id": "validation",
+      "slug": "validation",
+      "name": "Validation",
+      "packageName": "@backendfoundry/validation",
+      "displayName": "Request Validation",
+      "category": "Security & Validation",
+      "directory": "packages/validation",
+      "version": "1.0.0",
+      "description": "Typed schema validation for request bodies, query strings, and route parameters with built-in fluent validators, external Zod compatibility, and automatic sensitive-field redaction.",
+      "install": {
+        "npm": "npm install @backendfoundry/validation",
+        "pnpm": "pnpm add @backendfoundry/validation",
+        "yarn": "yarn add @backendfoundry/validation",
+        "cli": "npx @backendfoundry/cli add validation"
+      },
+      "usage": "import { v, validateBody } from \"@backendfoundry/validation\";\n\nconst CreateUserSchema = v.object({\n  email: v.string().trim().email(),\n  password: v.string().min(12),\n  role: v.enum([\"admin\", \"developer\", \"viewer\"]).default(\"developer\")\n}).strict();\n\nconst payload = validateBody(CreateUserSchema, req.body);",
+      "registryDependencies": [
+        "core"
+      ],
+      "files": [
+        {
+          "path": "packages/validation/src/index.ts",
+          "target": "validation.ts"
+        }
+      ],
+      "playground": {
+        "scenario": "validation-signup",
+        "title": "Validate a signup request body",
+        "description": "Runs a real v.object() schema (email, password >= 12 chars, integer age >= 18, enum plan, up to 3 tags) against your JSON. Sensitive field messages are redacted automatically.",
+        "inputs": [
+          {
+            "key": "body",
+            "label": "Request body (JSON)",
+            "type": "json",
+            "default": "{\n  \"email\": \"ada@example.com\",\n  \"password\": \"short\",\n  \"age\": 17.5,\n  \"plan\": \"enterprise\",\n  \"tags\": [\"beta\", \"early\"],\n  \"isAdmin\": true\n}"
+          },
+          {
+            "key": "strict",
+            "label": "Strict mode (reject unknown keys)",
+            "type": "boolean",
+            "default": true
+          }
+        ]
+      },
+      "dependencies": {
+        "@backendfoundry/core": "workspace:*"
+      },
+      "optionalDependencies": {
+        "zod": "^3.23.0"
+      },
+      "supportedFrameworks": [
+        "Express",
+        "Fastify",
+        "Next.js Route Handlers",
+        "Node.js HTTP"
+      ],
+      "runtimeRequirements": "Node.js >= 18.18.0, TypeScript >= 5.0",
+      "entryPoints": {
+        "esm": "./dist/index.js",
+        "cjs": "./dist/index.cjs",
+        "types": "./dist/index.d.ts"
+      },
+      "docsRoute": "/packages/validation",
+      "hasPlayground": true,
+      "cli": {
+        "npmInstall": true,
+        "sourceAddSupported": true,
+        "sourceAddReason": "Self-contained schema validator depending only on @backendfoundry/core.",
+        "targetFile": "src/lib/backendfoundry/validation.ts"
+      },
+      "exportedApis": [
+        {
+          "name": "v",
+          "kind": "object",
+          "signature": "v.object(...) | v.string() | v.number() | v.boolean() | v.enum() | v.array()",
+          "description": "Zero-dependency fluent schema builder compatible with safeParse() and parse()."
+        },
+        {
+          "name": "validateBody / validateQuery / validateParams",
+          "kind": "function",
+          "signature": "validateBody<T>(schema: SchemaLike<T>, body: unknown, requestId?: string): T",
+          "description": "Validates untrusted request input against any BackendFoundry or Zod schema."
+        },
+        {
+          "name": "expressValidate / fastifyValidate",
+          "kind": "function",
+          "signature": "expressValidate({ body?, query?, params? })",
+          "description": "Framework middleware and preHandler hooks that populate req.validated and return 400 on failure."
+        },
+        {
+          "name": "ValidationError",
+          "kind": "class",
+          "signature": "new ValidationError(issues, target, requestId?)",
+          "description": "Structured HTTP 400 error containing field-level issues with redacted sensitive field messages."
+        }
+      ],
+      "configSchema": [
+        {
+          "option": "body",
+          "type": "SchemaLike<B>",
+          "default": "undefined",
+          "required": false,
+          "description": "Schema used to validate and transform request.body."
+        },
+        {
+          "option": "query",
+          "type": "SchemaLike<Q>",
+          "default": "undefined",
+          "required": false,
+          "description": "Schema used to validate and coerce request.query parameters."
+        },
+        {
+          "option": "params",
+          "type": "SchemaLike<P>",
+          "default": "undefined",
+          "required": false,
+          "description": "Schema used to validate route parameters."
+        }
+      ],
+      "errorBehavior": "Throws ValidationError (HTTP 400, code: VALIDATION_FAILED) with structured path/code/message issues.",
+      "securityNotes": [
+        "Sensitive fields matching password, secret, token, apiKey, authorization, cvv, or ssn have their error descriptions replaced so rejected secret values are never echoed back.",
+        "Use .strict() on object schemas to reject unexpected prototype-pollution or mass-assignment properties."
+      ],
+      "limitations": [
+        "Does not parse raw multipart/form-data streams; pair with a body parser with strict byte-size limits before validation."
+      ],
+      "status": {
+        "build": "passing",
+        "tests": "passing",
+        "publicationStatus": "workspace-ready"
+      },
+      "examples": {
+        "basic": "import { v, validateBody } from \"@backendfoundry/validation\";\n\nconst CreateUserSchema = v.object({\n  email: v.string().trim().email(),\n  password: v.string().min(12),\n  role: v.enum([\"admin\", \"developer\", \"viewer\"]).default(\"developer\")\n}).strict();\n\nconst payload = validateBody(CreateUserSchema, req.body);",
+        "express": "import { v, expressValidate } from \"@backendfoundry/validation\";\n\napp.post(\n  \"/v1/users\",\n  expressValidate({ body: v.object({ email: v.string().email() }).strict() }),\n  (req, res) => res.status(201).json({ email: req.body.email })\n);",
+        "fastify": "import { v, fastifyValidate } from \"@backendfoundry/validation\";\n\nfastify.post(\n  \"/v1/users\",\n  { preHandler: fastifyValidate({ body: v.object({ email: v.string().email() }).strict() }) },\n  async (request) => ({ email: request.body.email })\n);",
+        "nextjs": "import { v, validateBody } from \"@backendfoundry/validation\";\nimport { toSafeErrorResponse } from \"@backendfoundry/errors\";\n\nconst Schema = v.object({ email: v.string().email() }).strict();\n\nexport async function POST(req: Request) {\n  try {\n    const data = validateBody(Schema, await req.json());\n    return Response.json({ ok: true, data }, { status: 201 });\n  } catch (err) {\n    const safe = toSafeErrorResponse(err);\n    return Response.json(safe.body, { status: safe.statusCode });\n  }\n}"
+      }
+    },
+    {
+      "id": "rate-limit",
+      "slug": "rate-limit",
+      "name": "Rate Limit",
+      "packageName": "@backendfoundry/rate-limit",
+      "displayName": "Rate Limiting",
+      "category": "Security & Validation",
+      "directory": "packages/rate-limit",
+      "version": "1.0.0",
+      "description": "Sliding-window and fixed-window rate limiting with standard IETF/X-RateLimit headers, per-route and per-tenant keys, in-memory local store, and atomic Redis Lua adapter.",
+      "install": {
+        "npm": "npm install @backendfoundry/rate-limit",
+        "pnpm": "pnpm add @backendfoundry/rate-limit",
+        "yarn": "yarn add @backendfoundry/rate-limit",
+        "cli": "npx @backendfoundry/cli add rate-limit"
+      },
+      "usage": "import { createRateLimiter, MemoryRateLimitStore } from \"@backendfoundry/rate-limit\";\n\nconst limiter = createRateLimiter({\n  limit: 60,\n  windowMs: 60_000,\n  algorithm: \"sliding-window\",\n  store: new MemoryRateLimitStore()\n});\n\nconst decision = await limiter.check({ key: `api:${userId}` });\nif (!decision.allowed) {\n  console.log(\"Retry after (s):\", decision.retryAfterSeconds);\n}",
+      "registryDependencies": [
+        "core",
+        "errors"
+      ],
+      "files": [
+        {
+          "path": "packages/rate-limit/src/index.ts",
+          "target": "rate-limit.ts"
+        }
+      ],
+      "playground": {
+        "scenario": "rate-limit-burst",
+        "title": "Burst of requests against a limiter",
+        "description": "Fires N requests at a fixed interval against createRateLimiter() using a simulated clock, and shows which are allowed (200) and which are blocked (429) with Retry-After.",
+        "inputs": [
+          {
+            "key": "limit",
+            "label": "Limit (requests per window)",
+            "type": "number",
+            "default": 5,
+            "min": 1,
+            "max": 1000
+          },
+          {
+            "key": "windowMs",
+            "label": "Window (ms)",
+            "type": "number",
+            "default": 1000,
+            "min": 50,
+            "max": 3600000
+          },
+          {
+            "key": "requests",
+            "label": "Requests to send",
+            "type": "number",
+            "default": 14,
+            "min": 1,
+            "max": 200
+          },
+          {
+            "key": "intervalMs",
+            "label": "Interval between requests (ms)",
+            "type": "number",
+            "default": 100,
+            "min": 0,
+            "max": 60000
+          },
+          {
+            "key": "algorithm",
+            "label": "Algorithm",
+            "type": "select",
+            "default": "sliding-window",
+            "options": [
+              "sliding-window",
+              "fixed-window"
+            ]
+          }
+        ]
+      },
+      "dependencies": {
+        "@backendfoundry/core": "workspace:*",
+        "@backendfoundry/errors": "workspace:*"
+      },
+      "optionalDependencies": {
+        "ioredis": "^5.4.1"
+      },
+      "supportedFrameworks": [
+        "Express",
+        "Fastify",
+        "Next.js Route Handlers",
+        "Node.js HTTP"
+      ],
+      "runtimeRequirements": "Node.js >= 18.18.0, Redis >= 6.2 (for distributed deployments)",
+      "entryPoints": {
+        "esm": "./dist/index.js",
+        "cjs": "./dist/index.cjs",
+        "types": "./dist/index.d.ts"
+      },
+      "docsRoute": "/packages/rate-limit",
+      "hasPlayground": true,
+      "cli": {
+        "npmInstall": true,
+        "sourceAddSupported": true,
+        "sourceAddReason": "Vendors rate-limit.ts together with its core.ts and errors.ts dependencies.",
+        "targetFile": "src/lib/backendfoundry/rate-limit.ts"
+      },
+      "exportedApis": [
+        {
+          "name": "createRateLimiter",
+          "kind": "function",
+          "signature": "createRateLimiter(config: RateLimitConfig)",
+          "description": "Creates a rate limiter instance with check(), consumeOrThrow(), and reset()."
+        },
+        {
+          "name": "MemoryRateLimitStore",
+          "kind": "class",
+          "signature": "new MemoryRateLimitStore({ algorithm?, maxKeys? })",
+          "description": "Single-process in-memory sliding or fixed window counter store."
+        },
+        {
+          "name": "RedisRateLimitStore",
+          "kind": "class",
+          "signature": "new RedisRateLimitStore({ client, prefix? })",
+          "description": "Distributed atomic rate-limit store using a Redis Lua script."
+        },
+        {
+          "name": "expressRateLimit / fastifyRateLimit",
+          "kind": "function",
+          "signature": "expressRateLimit(config: RateLimitConfig)",
+          "description": "Framework middlewares that attach standard rate-limit headers and reject excess traffic with HTTP 429."
+        }
+      ],
+      "configSchema": [
+        {
+          "option": "limit",
+          "type": "number",
+          "default": "required",
+          "required": true,
+          "description": "Maximum allowed requests within windowMs."
+        },
+        {
+          "option": "windowMs",
+          "type": "number",
+          "default": "required",
+          "required": true,
+          "description": "Time window duration in milliseconds (>= 50ms)."
+        },
+        {
+          "option": "algorithm",
+          "type": "\"sliding-window\" | \"fixed-window\"",
+          "default": "\"sliding-window\"",
+          "required": false,
+          "description": "Counting strategy for in-memory rate limiting."
+        },
+        {
+          "option": "store",
+          "type": "RateLimitStore",
+          "default": "MemoryRateLimitStore",
+          "required": false,
+          "description": "Storage backend (MemoryRateLimitStore for local/single-process, RedisRateLimitStore for multi-instance)."
+        },
+        {
+          "option": "failOpen",
+          "type": "boolean",
+          "default": "false",
+          "required": false,
+          "description": "Whether to allow traffic if the backing Redis store is temporarily unreachable."
+        }
+      ],
+      "errorBehavior": "consumeOrThrow() and framework middlewares throw RateLimitExceededError (HTTP 429, code: RATE_LIMIT_EXCEEDED) with Retry-After header.",
+      "securityNotes": [
+        "When behind a reverse proxy (Cloudflare, ALB, Nginx), configure your framework's trust proxy setting before relying on x-forwarded-for, or spoofed headers can bypass IP limits.",
+        "In-memory counters are strictly process-local and are NOT shared across cluster workers or horizontal container replicas."
+      ],
+      "limitations": [
+        "MemoryRateLimitStore resets on process restart and does not synchronize across multiple Node.js instances.",
+        "RedisRateLimitStore requires a Redis client supporting eval() for atomic INCRBY + PEXPIRE execution."
+      ],
+      "status": {
+        "build": "passing",
+        "tests": "passing",
+        "publicationStatus": "workspace-ready"
+      },
+      "examples": {
+        "basic": "import { createRateLimiter, MemoryRateLimitStore } from \"@backendfoundry/rate-limit\";\n\nconst limiter = createRateLimiter({\n  limit: 60,\n  windowMs: 60_000,\n  algorithm: \"sliding-window\",\n  store: new MemoryRateLimitStore()\n});\n\nconst decision = await limiter.check({ key: `api:${userId}` });\nif (!decision.allowed) {\n  console.log(\"Retry after (s):\", decision.retryAfterSeconds);\n}",
+        "express": "import { expressRateLimit } from \"@backendfoundry/rate-limit\";\n\napp.use(\n  \"/v1/auth\",\n  expressRateLimit({ limit: 10, windowMs: 60_000, routeId: \"auth\" })\n);",
+        "fastify": "import { fastifyRateLimit } from \"@backendfoundry/rate-limit\";\n\nfastify.post(\n  \"/v1/login\",\n  { preHandler: fastifyRateLimit({ limit: 10, windowMs: 60_000, routeId: \"login\" }) },\n  async () => ({ ok: true })\n);",
+        "nextjs": "import { createRateLimiter } from \"@backendfoundry/rate-limit\";\n\nconst limiter = createRateLimiter({ limit: 20, windowMs: 60_000 });\n\nexport async function POST(req: Request) {\n  const ip = req.headers.get(\"x-forwarded-for\") ?? \"local\";\n  const decision = await limiter.check({ key: `next:${ip}` });\n  if (!decision.allowed) {\n    return Response.json({ error: \"Too many requests\" }, { status: 429, headers: decision.headers });\n  }\n  return Response.json({ ok: true }, { headers: decision.headers });\n}"
+      }
+    },
+    {
+      "id": "retry",
+      "slug": "retry",
+      "name": "Retry",
+      "packageName": "@backendfoundry/retry",
+      "displayName": "Retry Policy",
+      "category": "Reliability",
+      "directory": "packages/retry",
+      "version": "1.0.0",
+      "description": "Explicit retry policies with exponential backoff, full/equal jitter, retry predicates, per-attempt timeouts, AbortSignal cancellation, and attempt telemetry.",
+      "install": {
+        "npm": "npm install @backendfoundry/retry",
+        "pnpm": "pnpm add @backendfoundry/retry",
+        "yarn": "yarn add @backendfoundry/retry",
+        "cli": "npx @backendfoundry/cli add retry"
+      },
+      "usage": "import { createRetry } from \"@backendfoundry/retry\";\n\nconst retry = createRetry({\n  maxAttempts: 3,\n  initialDelayMs: 200,\n  maxDelayMs: 2000,\n  jitter: \"equal\",\n  attemptTimeoutMs: 1500\n});\n\nconst data = await retry(async (attempt, signal) => {\n  const res = await fetch(\"https://api.example.com/v1/inventory\", { signal });\n  if (!res.ok) throw new Error(`Upstream HTTP ${res.status}`);\n  return res.json();\n});",
+      "registryDependencies": [
+        "core",
+        "errors"
+      ],
+      "files": [
+        {
+          "path": "packages/retry/src/index.ts",
+          "target": "retry.ts"
+        }
+      ],
+      "playground": {
+        "scenario": "retry-backoff",
+        "title": "Retry with simulated failures",
+        "description": "Wraps an operation that fails a configurable number of times. The real createRetry() computes exponential backoff with jitter; delays are simulated so the timeline renders instantly.",
+        "inputs": [
+          {
+            "key": "failuresBeforeSuccess",
+            "label": "Failures before success",
+            "type": "number",
+            "default": 3,
+            "min": 0,
+            "max": 20
+          },
+          {
+            "key": "maxAttempts",
+            "label": "Max attempts",
+            "type": "number",
+            "default": 5,
+            "min": 1,
+            "max": 20
+          },
+          {
+            "key": "initialDelayMs",
+            "label": "Initial delay (ms)",
+            "type": "number",
+            "default": 200,
+            "min": 0,
+            "max": 60000
+          },
+          {
+            "key": "backoffFactor",
+            "label": "Backoff factor",
+            "type": "number",
+            "default": 2,
+            "min": 1,
+            "max": 10,
+            "step": 0.5
+          },
+          {
+            "key": "maxDelayMs",
+            "label": "Max delay (ms)",
+            "type": "number",
+            "default": 5000,
+            "min": 0,
+            "max": 600000
+          },
+          {
+            "key": "jitter",
+            "label": "Jitter",
+            "type": "select",
+            "default": "equal",
+            "options": [
+              "none",
+              "full",
+              "equal"
+            ]
+          },
+          {
+            "key": "errorStatus",
+            "label": "Simulated upstream status",
+            "type": "select",
+            "default": "503",
+            "options": [
+              "503",
+              "429",
+              "500",
+              "400"
+            ],
+            "help": "4xx errors (except 408/429) are not retried by defaultShouldRetry."
+          }
+        ]
+      },
+      "dependencies": {
+        "@backendfoundry/core": "workspace:*",
+        "@backendfoundry/errors": "workspace:*"
+      },
+      "optionalDependencies": {},
+      "supportedFrameworks": [
+        "Express",
+        "Fastify",
+        "Next.js Route Handlers",
+        "Node.js HTTP"
+      ],
+      "runtimeRequirements": "Node.js >= 18.18.0, TypeScript >= 5.0",
+      "entryPoints": {
+        "esm": "./dist/index.js",
+        "cjs": "./dist/index.cjs",
+        "types": "./dist/index.d.ts"
+      },
+      "docsRoute": "/packages/retry",
+      "hasPlayground": true,
+      "cli": {
+        "npmInstall": true,
+        "sourceAddSupported": true,
+        "sourceAddReason": "Self-contained reliability helper suitable for direct source vendoring or npm installation.",
+        "targetFile": "src/lib/backendfoundry/retry.ts"
+      },
+      "exportedApis": [
+        {
+          "name": "createRetry",
+          "kind": "function",
+          "signature": "createRetry(config?: RetryConfig)",
+          "description": "Creates a reusable retry runner with .executeWithMetadata() and direct function invocation."
+        },
+        {
+          "name": "computeBackoffDelay",
+          "kind": "function",
+          "signature": "computeBackoffDelay(attempt, options): number",
+          "description": "Calculates exponential backoff with none, full, or equal jitter."
+        },
+        {
+          "name": "RetryExhaustedError",
+          "kind": "class",
+          "signature": "new RetryExhaustedError(attempts, delaysMs, lastError)",
+          "description": "Thrown when all configured retry attempts fail."
+        },
+        {
+          "name": "RetryAbortedError",
+          "kind": "class",
+          "signature": "new RetryAbortedError()",
+          "description": "Thrown immediately when an AbortSignal cancels an in-flight attempt or backoff sleep."
+        }
+      ],
+      "configSchema": [
+        {
+          "option": "maxAttempts",
+          "type": "number",
+          "default": "3",
+          "required": false,
+          "description": "Maximum total execution attempts (1 to 20)."
+        },
+        {
+          "option": "initialDelayMs",
+          "type": "number",
+          "default": "200",
+          "required": false,
+          "description": "Base backoff delay in milliseconds before the first retry."
+        },
+        {
+          "option": "maxDelayMs",
+          "type": "number",
+          "default": "5000",
+          "required": false,
+          "description": "Upper ceiling for exponential backoff delay in milliseconds."
+        },
+        {
+          "option": "backoffFactor",
+          "type": "number",
+          "default": "2",
+          "required": false,
+          "description": "Exponential multiplier applied after each failed attempt."
+        },
+        {
+          "option": "jitter",
+          "type": "\"equal\" | \"full\" | \"none\"",
+          "default": "\"equal\"",
+          "required": false,
+          "description": "Randomization strategy to prevent thundering-herd retry waves."
+        },
+        {
+          "option": "attemptTimeoutMs",
+          "type": "number",
+          "default": "undefined",
+          "required": false,
+          "description": "Optional per-attempt execution timeout in milliseconds."
+        }
+      ],
+      "errorBehavior": "Throws RetryExhaustedError (HTTP 502) after exhausting maxAttempts, or rethrows non-retryable 4xx errors on first attempt.",
+      "securityNotes": [
+        "Never blindly retry non-idempotent mutations (such as charging a credit card or sending an email) unless paired with an upstream Idempotency-Key.",
+        "Always use 'equal' or 'full' jitter in production to avoid synchronized retry storms against recovering downstream services."
+      ],
+      "limitations": [
+        "In-process timer-based retries do not survive process crashes; use a persistent job queue for long-horizon background retries."
+      ],
+      "status": {
+        "build": "passing",
+        "tests": "passing",
+        "publicationStatus": "workspace-ready"
+      },
+      "examples": {
+        "basic": "import { createRetry } from \"@backendfoundry/retry\";\n\nconst retry = createRetry({\n  maxAttempts: 3,\n  initialDelayMs: 200,\n  maxDelayMs: 2000,\n  jitter: \"equal\",\n  attemptTimeoutMs: 1500\n});\n\nconst data = await retry(async (attempt, signal) => {\n  const res = await fetch(\"https://api.example.com/v1/inventory\", { signal });\n  if (!res.ok) throw new Error(`Upstream HTTP ${res.status}`);\n  return res.json();\n});",
+        "express": "import { createRetry } from \"@backendfoundry/retry\";\n\nconst retry = createRetry({ maxAttempts: 3, initialDelayMs: 150 });\n\napp.get(\"/v1/catalog\", async (req, res, next) => {\n  try {\n    const items = await retry(() => fetchCatalogFromUpstream());\n    res.json({ items });\n  } catch (err) {\n    next(err);\n  }\n});",
+        "fastify": "import { createRetry } from \"@backendfoundry/retry\";\n\nconst retry = createRetry({ maxAttempts: 3, initialDelayMs: 150 });\n\nfastify.get(\"/v1/catalog\", async () => {\n  const report = await retry.executeWithMetadata(() => fetchCatalogFromUpstream());\n  return { items: report.result, attempts: report.attempts };\n});",
+        "nextjs": "import { createRetry } from \"@backendfoundry/retry\";\n\nconst retry = createRetry({ maxAttempts: 3, initialDelayMs: 200 });\n\nexport async function GET(req: Request) {\n  const report = await retry.executeWithMetadata(\n    (_attempt, signal) => fetch(\"https://api.example.com/data\", { signal }),\n    { signal: req.signal }\n  );\n  return Response.json({ attempts: report.attempts });\n}"
+      }
+    },
+    {
+      "id": "circuit-breaker",
+      "slug": "circuit-breaker",
+      "name": "Circuit Breaker",
+      "packageName": "@backendfoundry/circuit-breaker",
+      "displayName": "Circuit Breaker",
+      "category": "Reliability",
+      "directory": "packages/circuit-breaker",
+      "version": "1.0.0",
+      "description": "Deterministic CLOSED / OPEN / HALF_OPEN state machine that fast-fails degraded dependencies, limits concurrent recovery probes, and emits state-change telemetry.",
+      "install": {
+        "npm": "npm install @backendfoundry/circuit-breaker",
+        "pnpm": "pnpm add @backendfoundry/circuit-breaker",
+        "yarn": "yarn add @backendfoundry/circuit-breaker",
+        "cli": "npx @backendfoundry/cli add circuit-breaker"
+      },
+      "usage": "import { createCircuitBreaker } from \"@backendfoundry/circuit-breaker\";\n\nconst paymentsBreaker = createCircuitBreaker({\n  name: \"stripe-gateway\",\n  failureThreshold: 4,\n  successThreshold: 2,\n  resetTimeoutMs: 10_000,\n  onStateChange: (evt) => console.info(`[Circuit ${evt.name}] ${evt.from} -> ${evt.to}`)\n});\n\nconst result = await paymentsBreaker.execute(() => callPaymentProvider());",
+      "registryDependencies": [
+        "core"
+      ],
+      "files": [
+        {
+          "path": "packages/circuit-breaker/src/index.ts",
+          "target": "circuit-breaker.ts"
+        }
+      ],
+      "playground": {
+        "scenario": "circuit-breaker-transitions",
+        "title": "Circuit breaker state machine",
+        "description": "Drive createCircuitBreaker() with a sequence of calls. Use ok / fail for calls and wait:<ms> to advance the simulated clock. Watch CLOSED -> OPEN -> HALF_OPEN -> CLOSED transitions.",
+        "inputs": [
+          {
+            "key": "failureThreshold",
+            "label": "Failure threshold",
+            "type": "number",
+            "default": 3,
+            "min": 1,
+            "max": 100
+          },
+          {
+            "key": "successThreshold",
+            "label": "Success threshold (half-open)",
+            "type": "number",
+            "default": 2,
+            "min": 1,
+            "max": 100
+          },
+          {
+            "key": "resetTimeoutMs",
+            "label": "Reset timeout (ms)",
+            "type": "number",
+            "default": 5000,
+            "min": 50,
+            "max": 3600000
+          },
+          {
+            "key": "sequence",
+            "label": "Call sequence",
+            "type": "textarea",
+            "default": "ok fail fail fail ok ok wait:5000 ok fail wait:5000 ok ok ok"
+          }
+        ]
+      },
+      "dependencies": {
+        "@backendfoundry/core": "workspace:*"
+      },
+      "optionalDependencies": {},
+      "supportedFrameworks": [
+        "Express",
+        "Fastify",
+        "Next.js Route Handlers",
+        "Node.js HTTP"
+      ],
+      "runtimeRequirements": "Node.js >= 18.18.0, TypeScript >= 5.0",
+      "entryPoints": {
+        "esm": "./dist/index.js",
+        "cjs": "./dist/index.cjs",
+        "types": "./dist/index.d.ts"
+      },
+      "docsRoute": "/packages/circuit-breaker",
+      "hasPlayground": true,
+      "cli": {
+        "npmInstall": true,
+        "sourceAddSupported": true,
+        "sourceAddReason": "Self-contained state machine with zero external dependencies beyond @backendfoundry/core.",
+        "targetFile": "src/lib/backendfoundry/circuit-breaker.ts"
+      },
+      "exportedApis": [
+        {
+          "name": "createCircuitBreaker",
+          "kind": "function",
+          "signature": "createCircuitBreaker(config?: CircuitBreakerConfig)",
+          "description": "Creates a circuit breaker instance with execute(), getStats(), and reset()."
+        },
+        {
+          "name": "CircuitOpenError",
+          "kind": "class",
+          "signature": "new CircuitOpenError(circuitName, retryAfterMs)",
+          "description": "Thrown immediately (HTTP 503) when execute() is called while the circuit is OPEN or probe capacity is full."
+        }
+      ],
+      "configSchema": [
+        {
+          "option": "name",
+          "type": "string",
+          "default": "\"default-circuit\"",
+          "required": false,
+          "description": "Identifier included in logs, metrics, and CircuitOpenError."
+        },
+        {
+          "option": "failureThreshold",
+          "type": "number",
+          "default": "5",
+          "required": false,
+          "description": "Consecutive failures required to trip from CLOSED to OPEN."
+        },
+        {
+          "option": "successThreshold",
+          "type": "number",
+          "default": "2",
+          "required": false,
+          "description": "Consecutive successful probes in HALF_OPEN required to close the circuit."
+        },
+        {
+          "option": "resetTimeoutMs",
+          "type": "number",
+          "default": "15000",
+          "required": false,
+          "description": "Cooldown duration in OPEN state before transitioning to HALF_OPEN."
+        },
+        {
+          "option": "halfOpenMaxAttempts",
+          "type": "number",
+          "default": "1",
+          "required": false,
+          "description": "Maximum concurrent in-flight probe calls permitted while HALF_OPEN."
+        }
+      ],
+      "errorBehavior": "Throws CircuitOpenError (HTTP 503, code: CIRCUIT_OPEN) when OPEN or when HALF_OPEN probe slots are saturated.",
+      "securityNotes": [
+        "Configure isFailure() so client-side 400/404 errors do not trip the circuit breaker—otherwise an attacker sending invalid IDs could intentionally trip the circuit for all users."
+      ],
+      "limitations": [
+        "State is process-local per Node.js instance, which is typically desirable for fast zero-network-hop shedding but means each replica trips independently."
+      ],
+      "status": {
+        "build": "passing",
+        "tests": "passing",
+        "publicationStatus": "workspace-ready"
+      },
+      "examples": {
+        "basic": "import { createCircuitBreaker } from \"@backendfoundry/circuit-breaker\";\n\nconst paymentsBreaker = createCircuitBreaker({\n  name: \"stripe-gateway\",\n  failureThreshold: 4,\n  successThreshold: 2,\n  resetTimeoutMs: 10_000,\n  onStateChange: (evt) => console.info(`[Circuit ${evt.name}] ${evt.from} -> ${evt.to}`)\n});\n\nconst result = await paymentsBreaker.execute(() => callPaymentProvider());",
+        "express": "import { createCircuitBreaker } from \"@backendfoundry/circuit-breaker\";\n\nconst breaker = createCircuitBreaker({ name: \"shipping-api\", failureThreshold: 5 });\n\napp.get(\"/v1/rates\", async (req, res, next) => {\n  try {\n    const quotes = await breaker.execute(() => fetchShippingRates());\n    res.json({ quotes, circuit: breaker.getStats().state });\n  } catch (err) {\n    next(err);\n  }\n});",
+        "fastify": "import { createCircuitBreaker } from \"@backendfoundry/circuit-breaker\";\n\nconst breaker = createCircuitBreaker({ name: \"shipping-api\", failureThreshold: 5 });\n\nfastify.get(\"/v1/rates\", async () => {\n  const quotes = await breaker.execute(() => fetchShippingRates());\n  return { quotes, circuitState: breaker.getStats().state };\n});",
+        "nextjs": "import { createCircuitBreaker } from \"@backendfoundry/circuit-breaker\";\n\nconst breaker = createCircuitBreaker({ name: \"cms-upstream\", failureThreshold: 3 });\n\nexport async function GET() {\n  const data = await breaker.execute(() => fetch(\"https://cms.example.com/posts\").then((r) => r.json()));\n  return Response.json({ data, stats: breaker.getStats() });\n}"
+      }
+    },
+    {
+      "id": "cache",
+      "slug": "cache",
+      "name": "Cache",
+      "packageName": "@backendfoundry/cache",
+      "displayName": "Cache & Stampede Protection",
+      "category": "State & Caching",
+      "directory": "packages/cache",
+      "version": "1.0.0",
+      "description": "Explicitly scoped key-value caching with TTL management, in-memory and Redis adapters, safe JSON serialization boundaries, prefix invalidation, and stampede-coalesced getOrSet().",
+      "install": {
+        "npm": "npm install @backendfoundry/cache",
+        "pnpm": "pnpm add @backendfoundry/cache",
+        "yarn": "yarn add @backendfoundry/cache",
+        "cli": "npx @backendfoundry/cli add cache"
+      },
+      "usage": "import { createCache } from \"@backendfoundry/cache\";\n\nconst cache = createCache({\n  namespace: \"billing\",\n  defaultTtlMs: 30_000,\n  requireExplicitScope: true\n});\n\nconst { value, hit } = await cache.getOrSet(\n  \"active-plan\",\n  () => db.plans.findByTenant(tenantId),\n  { scope: `tenant:${tenantId}`, ttlMs: 60_000 }\n);",
+      "registryDependencies": [
+        "core"
+      ],
+      "files": [
+        {
+          "path": "packages/cache/src/index.ts",
+          "target": "cache.ts"
+        }
+      ],
+      "playground": {
+        "scenario": "cache-hit-miss",
+        "title": "Cache hits, misses & TTL expiry",
+        "description": "Runs getOrSet() for each key in the sequence against createCache() with a simulated clock. The loader only runs on a miss. Use wait:<ms> to let entries expire and del:<key> to invalidate.",
+        "inputs": [
+          {
+            "key": "ttlMs",
+            "label": "TTL (ms)",
+            "type": "number",
+            "default": 2000,
+            "min": 1,
+            "max": 86400000
+          },
+          {
+            "key": "loaderLatencyMs",
+            "label": "Simulated loader latency (ms)",
+            "type": "number",
+            "default": 120,
+            "min": 0,
+            "max": 60000
+          },
+          {
+            "key": "sequence",
+            "label": "Operations",
+            "type": "textarea",
+            "default": "user:1 user:2 user:1 user:1 wait:2500 user:1 del:user:2 user:2"
+          },
+          {
+            "key": "scope",
+            "label": "Scope",
+            "type": "text",
+            "default": "tenant:acme"
+          }
+        ]
+      },
+      "dependencies": {
+        "@backendfoundry/core": "workspace:*"
+      },
+      "optionalDependencies": {
+        "ioredis": "^5.4.1"
+      },
+      "supportedFrameworks": [
+        "Express",
+        "Fastify",
+        "Next.js Route Handlers",
+        "Node.js HTTP"
+      ],
+      "runtimeRequirements": "Node.js >= 18.18.0, optional Redis >= 6.0",
+      "entryPoints": {
+        "esm": "./dist/index.js",
+        "cjs": "./dist/index.cjs",
+        "types": "./dist/index.d.ts"
+      },
+      "docsRoute": "/packages/cache",
+      "hasPlayground": true,
+      "cli": {
+        "npmInstall": true,
+        "sourceAddSupported": true,
+        "sourceAddReason": "Vendors cache.ts together with core.ts. The Redis adapter is included but optional.",
+        "targetFile": "src/lib/backendfoundry/cache.ts"
+      },
+      "exportedApis": [
+        {
+          "name": "createCache",
+          "kind": "function",
+          "signature": "createCache(config?: CacheConfig)",
+          "description": "Creates a scoped cache instance supporting get, set, delete, invalidatePrefix, and getOrSet."
+        },
+        {
+          "name": "MemoryCacheStore",
+          "kind": "class",
+          "signature": "new MemoryCacheStore({ maxEntries? })",
+          "description": "Bounded in-memory cache store with lazy and active TTL eviction."
+        },
+        {
+          "name": "RedisCacheStore",
+          "kind": "class",
+          "signature": "new RedisCacheStore({ client })",
+          "description": "Redis adapter using PX millisecond expiration."
+        }
+      ],
+      "configSchema": [
+        {
+          "option": "namespace",
+          "type": "string",
+          "default": "\"app\"",
+          "required": false,
+          "description": "Top-level key prefix isolating this service's keys."
+        },
+        {
+          "option": "defaultTtlMs",
+          "type": "number",
+          "default": "60000",
+          "required": false,
+          "description": "Default time-to-live in milliseconds when not specified per call."
+        },
+        {
+          "option": "requireExplicitScope",
+          "type": "boolean",
+          "default": "false",
+          "required": false,
+          "description": "Forces callers to pass an explicit scope (e.g. 'tenant:acme' or 'public') on every operation."
+        }
+      ],
+      "errorBehavior": "Throws CACHE_SCOPE_REQUIRED (HTTP 400) if requireExplicitScope is true and scope is omitted; corrupt stored JSON is evicted and treated as a cache miss.",
+      "securityNotes": [
+        "Enable requireExplicitScope: true in multi-tenant applications so developers cannot accidentally cache tenant-specific data under a global key.",
+        "Never cache raw authentication tokens or session secrets in unencrypted shared caches."
+      ],
+      "limitations": [
+        "In-flight stampede coalescing in getOrSet() coalesces concurrent misses within the same Node.js process."
+      ],
+      "status": {
+        "build": "passing",
+        "tests": "passing",
+        "publicationStatus": "workspace-ready"
+      },
+      "examples": {
+        "basic": "import { createCache } from \"@backendfoundry/cache\";\n\nconst cache = createCache({\n  namespace: \"billing\",\n  defaultTtlMs: 30_000,\n  requireExplicitScope: true\n});\n\nconst { value, hit } = await cache.getOrSet(\n  \"active-plan\",\n  () => db.plans.findByTenant(tenantId),\n  { scope: `tenant:${tenantId}`, ttlMs: 60_000 }\n);",
+        "express": "import { createCache } from \"@backendfoundry/cache\";\n\nconst cache = createCache({ namespace: \"catalog\", defaultTtlMs: 30_000 });\n\napp.get(\"/v1/products/:id\", async (req, res) => {\n  const { value, hit } = await cache.getOrSet(`prod:${req.params.id}`, () => loadProduct(req.params.id), { scope: \"public\" });\n  res.setHeader(\"X-Cache\", hit ? \"HIT\" : \"MISS\");\n  res.json(value);\n});",
+        "fastify": "import { createCache } from \"@backendfoundry/cache\";\n\nconst cache = createCache({ namespace: \"catalog\", defaultTtlMs: 30_000 });\n\nfastify.get(\"/v1/products/:id\", async (request, reply) => {\n  const { id } = request.params as { id: string };\n  const { value, hit } = await cache.getOrSet(`prod:${id}`, () => loadProduct(id), { scope: \"public\" });\n  reply.header(\"X-Cache\", hit ? \"HIT\" : \"MISS\");\n  return value;\n});",
+        "nextjs": "import { createCache } from \"@backendfoundry/cache\";\n\nconst cache = createCache({ namespace: \"nextjs-api\", defaultTtlMs: 15_000 });\n\nexport async function GET() {\n  const { value, hit } = await cache.getOrSet(\"stats\", async () => ({ users: 420 }), { scope: \"public\" });\n  return Response.json({ ...value, cached: hit });\n}"
+      }
+    },
+    {
+      "id": "idempotency",
+      "slug": "idempotency",
+      "name": "Idempotency",
+      "packageName": "@backendfoundry/idempotency",
+      "displayName": "Idempotency Keys",
+      "category": "State & Caching",
+      "directory": "packages/idempotency",
+      "version": "1.0.0",
+      "description": "Atomic idempotency key locking, canonical SHA-256 request payload fingerprinting, stored response replay, and concurrent conflict protection.",
+      "install": {
+        "npm": "npm install @backendfoundry/idempotency",
+        "pnpm": "pnpm add @backendfoundry/idempotency",
+        "yarn": "yarn add @backendfoundry/idempotency",
+        "cli": "npx @backendfoundry/cli add idempotency"
+      },
+      "usage": "import { createIdempotencyGuard } from \"@backendfoundry/idempotency\";\n\nconst idempotency = createIdempotencyGuard({ ttlMs: 86_400_000 });\n\nconst outcome = await idempotency.execute(\n  {\n    key: req.headers[\"idempotency-key\"],\n    scope: `tenant:${tenantId}`,\n    method: \"POST\",\n    path: \"/v1/transfers\",\n    body: req.body\n  },\n  async () => {\n    const transfer = await ledger.createTransfer(req.body);\n    return { statusCode: 201, body: transfer };\n  }\n);",
+      "registryDependencies": [
+        "core",
+        "errors"
+      ],
+      "files": [
+        {
+          "path": "packages/idempotency/src/index.ts",
+          "target": "idempotency.ts"
+        }
+      ],
+      "playground": {
+        "scenario": "idempotency-duplicates",
+        "title": "Duplicate request detection",
+        "description": "Sends each request through createIdempotencyGuard().execute(). Repeated keys with the same payload are replayed without re-running the handler; the same key with a different payload is rejected (422).",
+        "inputs": [
+          {
+            "key": "requests",
+            "label": "Requests (JSON array)",
+            "type": "json",
+            "default": "[\n  { \"key\": \"order-1001\", \"body\": { \"amount\": 4200, \"currency\": \"USD\" } },\n  { \"key\": \"order-1001\", \"body\": { \"currency\": \"USD\", \"amount\": 4200 } },\n  { \"key\": \"order-1001\", \"body\": { \"amount\": 9900, \"currency\": \"USD\" } },\n  { \"key\": \"order-1002\", \"body\": { \"amount\": 100, \"currency\": \"EUR\" } },\n  { \"key\": \"order-1002\", \"body\": { \"amount\": 100, \"currency\": \"EUR\" } }\n]"
+          },
+          {
+            "key": "path",
+            "label": "Route path",
+            "type": "text",
+            "default": "/v1/payments"
+          }
+        ]
+      },
+      "dependencies": {
+        "@backendfoundry/core": "workspace:*",
+        "@backendfoundry/errors": "workspace:*"
+      },
+      "optionalDependencies": {
+        "ioredis": "^5.4.1"
+      },
+      "supportedFrameworks": [
+        "Express",
+        "Fastify",
+        "Next.js Route Handlers",
+        "Node.js HTTP"
+      ],
+      "runtimeRequirements": "Node.js >= 18.18.0, atomic key store for multi-instance deployment",
+      "entryPoints": {
+        "esm": "./dist/index.js",
+        "cjs": "./dist/index.cjs",
+        "types": "./dist/index.d.ts"
+      },
+      "docsRoute": "/packages/idempotency",
+      "hasPlayground": true,
+      "cli": {
+        "npmInstall": true,
+        "sourceAddSupported": true,
+        "sourceAddReason": "Vendors idempotency.ts together with core.ts and errors.ts.",
+        "targetFile": "src/lib/backendfoundry/idempotency.ts"
+      },
+      "exportedApis": [
+        {
+          "name": "createIdempotencyGuard",
+          "kind": "function",
+          "signature": "createIdempotencyGuard(config?: IdempotencyConfig)",
+          "description": "Creates an idempotency guard that locks keys, verifies SHA-256 fingerprints, and replays completed responses."
+        },
+        {
+          "name": "computeRequestFingerprint",
+          "kind": "function",
+          "signature": "computeRequestFingerprint({ method, path, body, scope }): string",
+          "description": "Generates a deterministic SHA-256 fingerprint over method, path, and canonicalized JSON body."
+        },
+        {
+          "name": "IdempotencyPayloadMismatchError",
+          "kind": "class",
+          "signature": "new IdempotencyPayloadMismatchError(key)",
+          "description": "HTTP 422 error thrown when a client reuses an Idempotency-Key with modified parameters."
+        },
+        {
+          "name": "IdempotencyInProgressError",
+          "kind": "class",
+          "signature": "new IdempotencyInProgressError(key)",
+          "description": "HTTP 409 error thrown when a duplicate request arrives while the original execution is still in flight."
+        }
+      ],
+      "configSchema": [
+        {
+          "option": "ttlMs",
+          "type": "number",
+          "default": "86400000",
+          "required": false,
+          "description": "Retention window (default 24 hours) for completed idempotency records."
+        },
+        {
+          "option": "lockTimeoutMs",
+          "type": "number",
+          "default": "30000",
+          "required": false,
+          "description": "In-progress lock lease duration before an abandoned lock expires."
+        },
+        {
+          "option": "headerName",
+          "type": "string",
+          "default": "\"idempotency-key\"",
+          "required": false,
+          "description": "HTTP header name used to extract the idempotency token."
+        }
+      ],
+      "errorBehavior": "Throws IdempotencyInProgressError (409) for concurrent duplicates and IdempotencyPayloadMismatchError (422) for altered payloads.",
+      "securityNotes": [
+        "Always scope idempotency keys by authenticated tenant or user ID (scope: `tenant:${tenantId}`) so one tenant cannot probe or replay another tenant's responses."
+      ],
+      "limitations": [
+        "MemoryIdempotencyStore is single-process only; use a distributed store with atomic compare-and-set (Redis SET NX PX or PostgreSQL unique constraint) in multi-replica deployments."
+      ],
+      "status": {
+        "build": "passing",
+        "tests": "passing",
+        "publicationStatus": "workspace-ready"
+      },
+      "examples": {
+        "basic": "import { createIdempotencyGuard } from \"@backendfoundry/idempotency\";\n\nconst idempotency = createIdempotencyGuard({ ttlMs: 86_400_000 });\n\nconst outcome = await idempotency.execute(\n  {\n    key: req.headers[\"idempotency-key\"],\n    scope: `tenant:${tenantId}`,\n    method: \"POST\",\n    path: \"/v1/transfers\",\n    body: req.body\n  },\n  async () => {\n    const transfer = await ledger.createTransfer(req.body);\n    return { statusCode: 201, body: transfer };\n  }\n);",
+        "express": "import { createIdempotencyGuard } from \"@backendfoundry/idempotency\";\n\nconst guard = createIdempotencyGuard();\n\napp.post(\"/v1/payments\", async (req, res, next) => {\n  try {\n    const key = guard.extractKey(req.headers);\n    const result = await guard.execute({ key, method: req.method, path: req.path, body: req.body }, async () => ({\n      statusCode: 201,\n      body: { paymentId: \"pay_101\", status: \"succeeded\" }\n    }));\n    res.set(result.headers).status(result.statusCode).json(result.body);\n  } catch (err) { next(err); }\n});",
+        "fastify": "import { createIdempotencyGuard } from \"@backendfoundry/idempotency\";\n\nconst guard = createIdempotencyGuard();\n\nfastify.post(\"/v1/payments\", async (request, reply) => {\n  const key = guard.extractKey(request.headers);\n  const result = await guard.execute({ key, method: request.method, path: request.url, body: request.body }, async () => ({\n    statusCode: 201,\n    body: { paymentId: \"pay_101\" }\n  }));\n  reply.headers(result.headers).code(result.statusCode).send(result.body);\n});",
+        "nextjs": "import { createIdempotencyGuard } from \"@backendfoundry/idempotency\";\n\nconst guard = createIdempotencyGuard();\n\nexport async function POST(req: Request) {\n  const key = req.headers.get(\"idempotency-key\") ?? \"\";\n  const body = await req.json();\n  const result = await guard.execute({ key, method: \"POST\", path: \"/api/orders\", body }, async () => ({\n    statusCode: 201,\n    body: { orderId: \"ord_55\" }\n  }));\n  return Response.json(result.body, { status: result.statusCode, headers: result.headers });\n}"
+      }
+    },
+    {
+      "id": "webhooks",
+      "slug": "webhooks",
+      "name": "Webhooks",
+      "packageName": "@backendfoundry/webhooks",
+      "displayName": "Webhooks & HMAC Security",
+      "category": "Security & Validation",
+      "directory": "packages/webhooks",
+      "version": "1.0.0",
+      "description": "HMAC-SHA256 webhook signing, constant-time signature verification, timestamp replay-window enforcement, zero-downtime secret rotation, and event deduplication.",
+      "install": {
+        "npm": "npm install @backendfoundry/webhooks",
+        "pnpm": "pnpm add @backendfoundry/webhooks",
+        "yarn": "yarn add @backendfoundry/webhooks",
+        "cli": "npx @backendfoundry/cli add webhooks"
+      },
+      "usage": "import { signWebhookPayload, verifyWebhookOrThrow } from \"@backendfoundry/webhooks\";\n\nconst rawBody = JSON.stringify({ id: \"evt_101\", type: \"order.fulfilled\" });\nconst { signatureHeader } = signWebhookPayload(rawBody, process.env.WEBHOOK_SECRET!);\n\nconst verified = verifyWebhookOrThrow({\n  payload: rawBody,\n  signatureHeader,\n  secret: [process.env.WEBHOOK_SECRET!, process.env.WEBHOOK_SECRET_PREV!].filter(Boolean),\n  toleranceSeconds: 300\n});",
+      "registryDependencies": [
+        "core"
+      ],
+      "files": [
+        {
+          "path": "packages/webhooks/src/index.ts",
+          "target": "webhooks.ts"
+        }
+      ],
+      "playground": {
+        "scenario": "webhooks-sign-verify",
+        "title": "Sign & verify a webhook",
+        "description": "Signs the payload with HMAC-SHA256 (t=<ts>,v1=<sig>) and verifies it with timestamp tolerance and secret rotation. Toggle tampering or clock skew to see verification fail.",
+        "inputs": [
+          {
+            "key": "payload",
+            "label": "Payload (raw body)",
+            "type": "json",
+            "default": "{\n  \"id\": \"evt_1042\",\n  \"type\": \"invoice.paid\",\n  \"data\": { \"amount\": 4200 }\n}"
+          },
+          {
+            "key": "secret",
+            "label": "Signing secret",
+            "type": "text",
+            "default": "whsec_live_9f8e7d6c5b"
+          },
+          {
+            "key": "verifySecrets",
+            "label": "Verifier secrets (comma separated)",
+            "type": "text",
+            "default": "whsec_prev_1a2b3c4d, whsec_live_9f8e7d6c5b"
+          },
+          {
+            "key": "tamper",
+            "label": "Tamper with body after signing",
+            "type": "boolean",
+            "default": false
+          },
+          {
+            "key": "skewSeconds",
+            "label": "Clock skew at verifier (s)",
+            "type": "number",
+            "default": 0,
+            "min": -86400,
+            "max": 86400
+          },
+          {
+            "key": "toleranceSeconds",
+            "label": "Tolerance (s)",
+            "type": "number",
+            "default": 300,
+            "min": 0,
+            "max": 86400
+          }
+        ]
+      },
+      "dependencies": {
+        "@backendfoundry/core": "workspace:*"
+      },
+      "optionalDependencies": {},
+      "supportedFrameworks": [
+        "Express",
+        "Fastify",
+        "Next.js Route Handlers",
+        "Node.js HTTP"
+      ],
+      "runtimeRequirements": "Node.js >= 18.18.0 (node:crypto timingSafeEqual)",
+      "entryPoints": {
+        "esm": "./dist/index.js",
+        "cjs": "./dist/index.cjs",
+        "types": "./dist/index.d.ts"
+      },
+      "docsRoute": "/packages/webhooks",
+      "hasPlayground": true,
+      "cli": {
+        "npmInstall": true,
+        "sourceAddSupported": true,
+        "sourceAddReason": "Uses built-in node:crypto and @backendfoundry/core; supports both npm install and source vendoring.",
+        "targetFile": "src/lib/backendfoundry/webhooks.ts"
+      },
+      "exportedApis": [
+        {
+          "name": "signWebhookPayload",
+          "kind": "function",
+          "signature": "signWebhookPayload(payload, secret, options?)",
+          "description": "Computes `t=<epoch>,v1=<hmac_sha256>` signature header over `<timestamp>.<rawBody>`."
+        },
+        {
+          "name": "verifyWebhookSignature",
+          "kind": "function",
+          "signature": "verifyWebhookSignature({ payload, signatureHeader, secret, toleranceSeconds? })",
+          "description": "Verifies HMAC signature using crypto.timingSafeEqual and checks replay window tolerance."
+        },
+        {
+          "name": "verifyWebhookOrThrow",
+          "kind": "function",
+          "signature": "verifyWebhookOrThrow(options): WebhookVerificationResult",
+          "description": "Throws WebhookVerificationError (HTTP 401) if signature or timestamp is invalid."
+        },
+        {
+          "name": "MemoryWebhookDeduplicator",
+          "kind": "class",
+          "signature": "new MemoryWebhookDeduplicator()",
+          "description": "Tracks processed webhook event IDs to prevent duplicate side effects during at-least-once delivery."
+        }
+      ],
+      "configSchema": [
+        {
+          "option": "secret",
+          "type": "string | readonly string[]",
+          "default": "required",
+          "required": true,
+          "description": "Signing secret or array of active secrets during key rotation (>= 8 chars)."
+        },
+        {
+          "option": "toleranceSeconds",
+          "type": "number",
+          "default": "300",
+          "required": false,
+          "description": "Maximum allowed clock skew / replay window in seconds (default 5 minutes)."
+        },
+        {
+          "option": "scheme",
+          "type": "string",
+          "default": "\"v1\"",
+          "required": false,
+          "description": "Signature version tag in the header."
+        }
+      ],
+      "errorBehavior": "verifyWebhookOrThrow() throws WebhookVerificationError (HTTP 401, code: WEBHOOK_VERIFICATION_FAILED) with reason metadata.",
+      "securityNotes": [
+        "Always verify signatures against the exact raw request body string or Buffer before JSON parsing and re-serialization, as whitespace changes alter the HMAC.",
+        "Uses crypto.timingSafeEqual on equal-length hex digests to prevent timing side-channel attacks.",
+        "Never log signing secrets in debug or error logs."
+      ],
+      "limitations": [
+        "Provider-specific formats (e.g. GitHub X-Hub-Signature-256 or Slack v0=) use different header layouts; @backendfoundry/webhooks implements the timestamped `t=...,v1=...` envelope."
+      ],
+      "status": {
+        "build": "passing",
+        "tests": "passing",
+        "publicationStatus": "workspace-ready"
+      },
+      "examples": {
+        "basic": "import { signWebhookPayload, verifyWebhookOrThrow } from \"@backendfoundry/webhooks\";\n\nconst rawBody = JSON.stringify({ id: \"evt_101\", type: \"order.fulfilled\" });\nconst { signatureHeader } = signWebhookPayload(rawBody, process.env.WEBHOOK_SECRET!);\n\nconst verified = verifyWebhookOrThrow({\n  payload: rawBody,\n  signatureHeader,\n  secret: [process.env.WEBHOOK_SECRET!, process.env.WEBHOOK_SECRET_PREV!].filter(Boolean),\n  toleranceSeconds: 300\n});",
+        "express": "import express from \"express\";\nimport { verifyWebhookOrThrow } from \"@backendfoundry/webhooks\";\n\napp.post(\"/v1/webhooks/incoming\", express.raw({ type: \"application/json\" }), (req, res, next) => {\n  try {\n    verifyWebhookOrThrow({\n      payload: req.body,\n      signatureHeader: req.headers[\"x-foundry-signature\"] as string,\n      secret: process.env.WEBHOOK_SECRET!\n    });\n    res.status(200).json({ received: true });\n  } catch (err) { next(err); }\n});",
+        "fastify": "import { verifyWebhookOrThrow } from \"@backendfoundry/webhooks\";\n\nfastify.post(\"/v1/webhooks/incoming\", async (request) => {\n  verifyWebhookOrThrow({\n    payload: JSON.stringify(request.body),\n    signatureHeader: request.headers[\"x-foundry-signature\"] as string,\n    secret: process.env.WEBHOOK_SECRET!\n  });\n  return { received: true };\n});",
+        "nextjs": "import { verifyWebhookOrThrow } from \"@backendfoundry/webhooks\";\n\nexport async function POST(req: Request) {\n  const rawBody = await req.text();\n  verifyWebhookOrThrow({\n    payload: rawBody,\n    signatureHeader: req.headers.get(\"x-foundry-signature\") ?? \"\",\n    secret: process.env.WEBHOOK_SECRET!\n  });\n  return Response.json({ received: true });\n}"
+      }
+    },
+    {
+      "id": "health",
+      "slug": "health",
+      "name": "Health",
+      "packageName": "@backendfoundry/health",
+      "displayName": "Health Checks",
+      "category": "Observability",
+      "directory": "packages/health",
+      "version": "1.0.0",
+      "description": "Kubernetes/cloud-ready liveness and readiness checks with custom dependency probes, strict per-probe timeouts, and credential-sanitized JSON output.",
+      "install": {
+        "npm": "npm install @backendfoundry/health",
+        "pnpm": "pnpm add @backendfoundry/health",
+        "yarn": "yarn add @backendfoundry/health",
+        "cli": "npx @backendfoundry/cli add health"
+      },
+      "usage": "import { createHealthRegistry } from \"@backendfoundry/health\";\n\nconst health = createHealthRegistry({ version: \"1.4.2\", defaultTimeoutMs: 1500 });\n\nhealth.registerProbe({\n  name: \"postgres\",\n  critical: true,\n  check: async () => { await db.query(\"SELECT 1\"); }\n});\n\nconst report = await health.checkReadiness();",
+      "registryDependencies": [
+        "errors"
+      ],
+      "files": [
+        {
+          "path": "packages/health/src/index.ts",
+          "target": "health.ts"
+        }
+      ],
+      "playground": {
+        "scenario": "health-readiness",
+        "title": "Readiness probes",
+        "description": "Registers probes with simulated latency and failures, then runs checkReadiness(). Critical failures yield 503/unhealthy, non-critical ones yield degraded, slow probes time out. Credentials in messages are scrubbed.",
+        "inputs": [
+          {
+            "key": "probes",
+            "label": "Probes (JSON array)",
+            "type": "json",
+            "default": "[\n  { \"name\": \"postgres\", \"critical\": true, \"latencyMs\": 25 },\n  { \"name\": \"redis\", \"critical\": true, \"latencyMs\": 10, \"error\": \"connect ECONNREFUSED redis://admin:hunter2@10.0.0.7:6379\" },\n  { \"name\": \"search\", \"critical\": false, \"latencyMs\": 900 }\n]"
+          },
+          {
+            "key": "timeoutMs",
+            "label": "Probe timeout (ms)",
+            "type": "number",
+            "default": 300,
+            "min": 10,
+            "max": 5000
+          },
+          {
+            "key": "exposeErrorMessages",
+            "label": "Expose error messages",
+            "type": "boolean",
+            "default": true
+          },
+          {
+            "key": "version",
+            "label": "Service version",
+            "type": "text",
+            "default": "1.4.2"
+          }
+        ]
+      },
+      "dependencies": {
+        "@backendfoundry/errors": "workspace:*"
+      },
+      "optionalDependencies": {},
+      "supportedFrameworks": [
+        "Express",
+        "Fastify",
+        "Next.js Route Handlers",
+        "Node.js HTTP"
+      ],
+      "runtimeRequirements": "Node.js >= 18.18.0, TypeScript >= 5.0",
+      "entryPoints": {
+        "esm": "./dist/index.js",
+        "cjs": "./dist/index.cjs",
+        "types": "./dist/index.d.ts"
+      },
+      "docsRoute": "/packages/health",
+      "hasPlayground": true,
+      "cli": {
+        "npmInstall": true,
+        "sourceAddSupported": true,
+        "sourceAddReason": "Lightweight probe runner suitable for direct source addition or package installation.",
+        "targetFile": "src/lib/backendfoundry/health.ts"
+      },
+      "exportedApis": [
+        {
+          "name": "createHealthRegistry",
+          "kind": "function",
+          "signature": "createHealthRegistry(config?: HealthRegistryConfig)",
+          "description": "Creates a probe registry with registerProbe(), checkLiveness(), checkReadiness(), and expressHandlers()."
+        }
+      ],
+      "configSchema": [
+        {
+          "option": "version",
+          "type": "string",
+          "default": "undefined",
+          "required": false,
+          "description": "Application release version reported in health responses."
+        },
+        {
+          "option": "defaultTimeoutMs",
+          "type": "number",
+          "default": "2000",
+          "required": false,
+          "description": "Default timeout in milliseconds per dependency probe."
+        },
+        {
+          "option": "exposeErrorMessages",
+          "type": "boolean",
+          "default": "false",
+          "required": false,
+          "description": "Whether to include sanitized probe error messages in public readiness responses."
+        }
+      ],
+      "errorBehavior": "Never throws from checkReadiness(); returns HTTP 503 with status 'unhealthy' when any critical probe fails or times out, and HTTP 200 'degraded' when only non-critical probes fail.",
+      "securityNotes": [
+        "By default exposeErrorMessages is false so public /health/ready endpoints never reveal internal database hostnames, ports, or driver exceptions.",
+        "Even when exposeErrorMessages is enabled, scrubSensitiveMessage() strips connection strings and bearer tokens."
+      ],
+      "limitations": [
+        "Avoid running expensive full-table queries in readiness probes, as orchestrators poll readiness every few seconds."
+      ],
+      "status": {
+        "build": "passing",
+        "tests": "passing",
+        "publicationStatus": "workspace-ready"
+      },
+      "examples": {
+        "basic": "import { createHealthRegistry } from \"@backendfoundry/health\";\n\nconst health = createHealthRegistry({ version: \"1.4.2\", defaultTimeoutMs: 1500 });\n\nhealth.registerProbe({\n  name: \"postgres\",\n  critical: true,\n  check: async () => { await db.query(\"SELECT 1\"); }\n});\n\nconst report = await health.checkReadiness();",
+        "express": "import { createHealthRegistry } from \"@backendfoundry/health\";\n\nconst health = createHealthRegistry({ version: \"1.0.0\" });\nconst handlers = health.expressHandlers();\n\napp.get(\"/health/live\", handlers.liveness);\napp.get(\"/health/ready\", handlers.readiness);",
+        "fastify": "import { createHealthRegistry } from \"@backendfoundry/health\";\n\nconst health = createHealthRegistry({ version: \"1.0.0\" });\n\nfastify.get(\"/health/ready\", async (_req, reply) => {\n  const report = await health.checkReadiness();\n  return reply.code(report.statusCode).send(report);\n});",
+        "nextjs": "import { createHealthRegistry } from \"@backendfoundry/health\";\n\nconst health = createHealthRegistry({ version: \"1.0.0\" });\n\nexport async function GET() {\n  const report = await health.checkReadiness();\n  return Response.json(report, { status: report.statusCode });\n}"
+      }
+    },
+    {
+      "id": "errors",
+      "slug": "errors",
+      "name": "Errors",
+      "packageName": "@backendfoundry/errors",
+      "displayName": "Error Handling",
+      "category": "Foundation",
+      "directory": "packages/errors",
+      "version": "1.0.0",
+      "description": "Typed HTTP application errors, machine-readable error categories, credential-scrubbing normalizer, and Express/Fastify error-handling adapters.",
+      "install": {
+        "npm": "npm install @backendfoundry/errors",
+        "pnpm": "pnpm add @backendfoundry/errors",
+        "yarn": "yarn add @backendfoundry/errors",
+        "cli": "npx @backendfoundry/cli add errors"
+      },
+      "usage": "import { NotFoundError, toSafeErrorResponse } from \"@backendfoundry/errors\";\n\ntry {\n  throw new NotFoundError(\"Project proj_42 not found\", { projectId: \"proj_42\" });\n} catch (err) {\n  const response = toSafeErrorResponse(err, { requestId: \"req_99\" });\n  // response.statusCode === 404\n}",
+      "registryDependencies": [
+        "core"
+      ],
+      "files": [
+        {
+          "path": "packages/errors/src/index.ts",
+          "target": "errors.ts"
+        }
+      ],
+      "playground": {
+        "scenario": "errors-serialization",
+        "title": "Safe error serialization",
+        "description": "Throws the selected error and runs it through toSafeErrorResponse(). 5xx internals are hidden, credentials are scrubbed, and 429s get a Retry-After header.",
+        "inputs": [
+          {
+            "key": "errorType",
+            "label": "Error to throw",
+            "type": "select",
+            "default": "NotFoundError",
+            "options": [
+              "BadRequestError",
+              "UnauthorizedError",
+              "ForbiddenError",
+              "NotFoundError",
+              "ConflictError",
+              "RateLimitExceededError",
+              "DependencyFailedError",
+              "GatewayTimeoutError",
+              "Error (raw)",
+              "ZodLikeIssues",
+              "string thrown"
+            ]
+          },
+          {
+            "key": "message",
+            "label": "Message",
+            "type": "text",
+            "default": "Project proj_42 not found (db: postgres://app:s3cret@db.internal/prod)"
+          },
+          {
+            "key": "includeInternalDetails",
+            "label": "Include internal details (dev only)",
+            "type": "boolean",
+            "default": false
+          },
+          {
+            "key": "requestId",
+            "label": "Request ID",
+            "type": "text",
+            "default": "req_playground_01"
+          }
+        ]
+      },
+      "dependencies": {
+        "@backendfoundry/core": "workspace:*"
+      },
+      "optionalDependencies": {},
+      "supportedFrameworks": [
+        "Express",
+        "Fastify",
+        "Next.js Route Handlers",
+        "Node.js HTTP"
+      ],
+      "runtimeRequirements": "Node.js >= 18.18.0, TypeScript >= 5.0",
+      "entryPoints": {
+        "esm": "./dist/index.js",
+        "cjs": "./dist/index.cjs",
+        "types": "./dist/index.d.ts"
+      },
+      "docsRoute": "/packages/errors",
+      "hasPlayground": true,
+      "cli": {
+        "npmInstall": true,
+        "sourceAddSupported": true,
+        "sourceAddReason": "Core error catalog depending only on @backendfoundry/core.",
+        "targetFile": "src/lib/backendfoundry/errors.ts"
+      },
+      "exportedApis": [
+        {
+          "name": "BadRequestError / UnauthorizedError / ForbiddenError / NotFoundError / ConflictError / RateLimitExceededError / DependencyFailedError / GatewayTimeoutError",
+          "kind": "class",
+          "signature": "new NotFoundError(message?, details?, code?)",
+          "description": "Semantic HTTP error subclasses with preconfigured statusCode, category, and expose settings."
+        },
+        {
+          "name": "normalizeError",
+          "kind": "function",
+          "signature": "normalizeError(err: unknown, requestId?: string): FoundryError",
+          "description": "Converts unknown exceptions or Zod errors into a standardized FoundryError with scrubbed credentials."
+        },
+        {
+          "name": "toSafeErrorResponse",
+          "kind": "function",
+          "signature": "toSafeErrorResponse(err, options?): { statusCode, headers, body }",
+          "description": "Produces a client-safe HTTP response payload and invokes internal diagnostic hooks."
+        },
+        {
+          "name": "createExpressErrorHandler / createFastifyErrorHandler",
+          "kind": "function",
+          "signature": "createExpressErrorHandler(options?)",
+          "description": "Drop-in framework error handlers with request ID correlation."
+        }
+      ],
+      "configSchema": [
+        {
+          "option": "includeInternalDetails",
+          "type": "boolean",
+          "default": "false",
+          "required": false,
+          "description": "Whether to expose 5xx error messages/details (enable only in local development)."
+        },
+        {
+          "option": "onError",
+          "type": "(normalized, raw) => void",
+          "default": "undefined",
+          "required": false,
+          "description": "Callback invoked with the normalized and raw error for internal structured logging."
+        }
+      ],
+      "errorBehavior": "Normalizes all uncaught errors into structured JSON `{ error: { code, message, category, statusCode, requestId, timestamp } }`.",
+      "securityNotes": [
+        "Stack traces are never included in HTTP responses.",
+        "PostgreSQL, MySQL, MongoDB, Redis URLs, Bearer tokens, and sk-* API keys are automatically scrubbed via scrubSensitiveMessage()."
+      ],
+      "limitations": [
+        "Must be registered as the final middleware in Express (after all routes) to catch downstream errors."
+      ],
+      "status": {
+        "build": "passing",
+        "tests": "passing",
+        "publicationStatus": "workspace-ready"
+      },
+      "examples": {
+        "basic": "import { NotFoundError, toSafeErrorResponse } from \"@backendfoundry/errors\";\n\ntry {\n  throw new NotFoundError(\"Project proj_42 not found\", { projectId: \"proj_42\" });\n} catch (err) {\n  const response = toSafeErrorResponse(err, { requestId: \"req_99\" });\n  // response.statusCode === 404\n}",
+        "express": "import { createExpressErrorHandler } from \"@backendfoundry/errors\";\n\napp.use(createExpressErrorHandler({\n  includeInternalDetails: process.env.NODE_ENV === \"development\",\n  onError: (err) => logger.error(err.message, { code: err.code })\n}));",
+        "fastify": "import { createFastifyErrorHandler } from \"@backendfoundry/errors\";\n\nfastify.setErrorHandler(createFastifyErrorHandler({\n  onError: (err) => logger.error(err.message, { code: err.code })\n}));",
+        "nextjs": "import { toSafeErrorResponse } from \"@backendfoundry/errors\";\n\nexport async function GET() {\n  try {\n    // route logic\n    return Response.json({ ok: true });\n  } catch (err) {\n    const res = toSafeErrorResponse(err);\n    return Response.json(res.body, { status: res.statusCode, headers: res.headers });\n  }\n}"
+      }
+    },
+    {
+      "id": "logger",
+      "slug": "logger",
+      "name": "Logger",
+      "packageName": "@backendfoundry/logger",
+      "displayName": "Request Context & Logging",
+      "category": "Observability",
+      "directory": "packages/logger",
+      "version": "1.0.0",
+      "description": "Structured JSON logging with Node.js AsyncLocalStorage request-context propagation, automatic sensitive-field redaction, pluggable transports, and HTTP duration middleware.",
+      "install": {
+        "npm": "npm install @backendfoundry/logger",
+        "pnpm": "pnpm add @backendfoundry/logger",
+        "yarn": "yarn add @backendfoundry/logger",
+        "cli": "npx @backendfoundry/cli add logger"
+      },
+      "usage": "import { createLogger, runWithRequestContext } from \"@backendfoundry/logger\";\n\nconst logger = createLogger({ service: \"payments-worker\", level: \"info\" });\n\nawait runWithRequestContext({ requestId: \"req_8821\", tenantId: \"t_acme\" }, async () => {\n  logger.info(\"Processing settlement\", { amountCents: 15000, apiKey: \"sk-secret\" });\n  // Logs JSON with requestId: \"req_8821\" and apiKey: \"[REDACTED]\"\n});",
+      "registryDependencies": [
+        "core",
+        "errors"
+      ],
+      "files": [
+        {
+          "path": "packages/logger/src/index.ts",
+          "target": "logger.ts"
+        }
+      ],
+      "playground": {
+        "scenario": "logger-structured",
+        "title": "Structured logs with redaction",
+        "description": "Emits log entries through createLogger() inside runWithRequestContext(). Entries below the minimum level are dropped, sensitive keys are redacted, and every line carries the request ID.",
+        "inputs": [
+          {
+            "key": "level",
+            "label": "Minimum level",
+            "type": "select",
+            "default": "info",
+            "options": [
+              "debug",
+              "info",
+              "warn",
+              "error",
+              "fatal"
+            ]
+          },
+          {
+            "key": "service",
+            "label": "Service name",
+            "type": "text",
+            "default": "payments-api"
+          },
+          {
+            "key": "requestId",
+            "label": "Request ID",
+            "type": "text",
+            "default": "req_8821"
+          },
+          {
+            "key": "redactFields",
+            "label": "Extra redact fields (comma separated)",
+            "type": "text",
+            "default": "iban"
+          },
+          {
+            "key": "entries",
+            "label": "Log calls (JSON array)",
+            "type": "json",
+            "default": "[\n  { \"level\": \"debug\", \"message\": \"cache warmup\", \"meta\": { \"keys\": 42 } },\n  { \"level\": \"info\", \"message\": \"charge created\", \"meta\": { \"amountCents\": 15000, \"apiKey\": \"sk-live-123\", \"iban\": \"DE89370400440532013000\" } },\n  { \"level\": \"warn\", \"message\": \"slow upstream\", \"meta\": { \"durationMs\": 1830 } },\n  { \"level\": \"error\", \"message\": \"auth failed with Bearer abc.def.ghi\", \"meta\": { \"password\": \"hunter2\" } }\n]"
+          }
+        ]
+      },
+      "dependencies": {
+        "@backendfoundry/core": "workspace:*",
+        "@backendfoundry/errors": "workspace:*"
+      },
+      "optionalDependencies": {},
+      "supportedFrameworks": [
+        "Express",
+        "Fastify",
+        "Next.js Route Handlers",
+        "Node.js HTTP"
+      ],
+      "runtimeRequirements": "Node.js >= 18.18.0 (node:async_hooks AsyncLocalStorage)",
+      "entryPoints": {
+        "esm": "./dist/index.js",
+        "cjs": "./dist/index.cjs",
+        "types": "./dist/index.d.ts"
+      },
+      "docsRoute": "/packages/logger",
+      "hasPlayground": true,
+      "cli": {
+        "npmInstall": true,
+        "sourceAddSupported": true,
+        "sourceAddReason": "Vendors logger.ts with core.ts and errors.ts. Keep a single copy per process so the AsyncLocalStorage context store is shared.",
+        "targetFile": "src/lib/backendfoundry/logger.ts"
+      },
+      "exportedApis": [
+        {
+          "name": "createLogger",
+          "kind": "function",
+          "signature": "createLogger(config?: LoggerConfig)",
+          "description": "Creates a structured logger with debug, info, warn, error, fatal, and child() methods."
+        },
+        {
+          "name": "runWithRequestContext",
+          "kind": "function",
+          "signature": "runWithRequestContext(context, callback)",
+          "description": "Runs synchronous or asynchronous code within an isolated AsyncLocalStorage request context."
+        },
+        {
+          "name": "redactSensitiveObject",
+          "kind": "function",
+          "signature": "redactSensitiveObject(input, customKeys?)",
+          "description": "Recursively clones objects while replacing sensitive keys and credential strings with [REDACTED]."
+        },
+        {
+          "name": "expressRequestLogger",
+          "kind": "function",
+          "signature": "expressRequestLogger(logger)",
+          "description": "Express middleware that initializes request context and logs HTTP method, path, status, outcome, and durationMs."
+        }
+      ],
+      "configSchema": [
+        {
+          "option": "service",
+          "type": "string",
+          "default": "\"backendfoundry-service\"",
+          "required": false,
+          "description": "Service identifier attached to every JSON log entry."
+        },
+        {
+          "option": "level",
+          "type": "\"debug\" | \"info\" | \"warn\" | \"error\" | \"fatal\"",
+          "default": "\"info\"",
+          "required": false,
+          "description": "Minimum log severity threshold."
+        },
+        {
+          "option": "redactFields",
+          "type": "string[]",
+          "default": "[]",
+          "required": false,
+          "description": "Additional field names to redact alongside default password/token/secret keys."
+        }
+      ],
+      "errorBehavior": "Handles circular object references safely via WeakSet ([Circular]) and never throws during log serialization.",
+      "securityNotes": [
+        "Automatically redacts password, passphrase, secret, token, accessToken, refreshToken, apiKey, authorization, cookie, creditCard, cvv, ssn, and privateKey at any nesting depth.",
+        "Never logs full HTTP request bodies by default."
+      ],
+      "limitations": [
+        "AsyncLocalStorage context propagates across native Promises and async/await, but custom callback queues or EventEmitters that bind outside the request lifecycle may require explicit context binding."
+      ],
+      "status": {
+        "build": "passing",
+        "tests": "passing",
+        "publicationStatus": "workspace-ready"
+      },
+      "examples": {
+        "basic": "import { createLogger, runWithRequestContext } from \"@backendfoundry/logger\";\n\nconst logger = createLogger({ service: \"payments-worker\", level: \"info\" });\n\nawait runWithRequestContext({ requestId: \"req_8821\", tenantId: \"t_acme\" }, async () => {\n  logger.info(\"Processing settlement\", { amountCents: 15000, apiKey: \"sk-secret\" });\n  // Logs JSON with requestId: \"req_8821\" and apiKey: \"[REDACTED]\"\n});",
+        "express": "import { createLogger, expressRequestLogger } from \"@backendfoundry/logger\";\n\nconst logger = createLogger({ service: \"api-gateway\" });\napp.use(expressRequestLogger(logger));",
+        "fastify": "import { createLogger, runWithRequestContext } from \"@backendfoundry/logger\";\n\nconst logger = createLogger({ service: \"fastify-api\" });\nfastify.addHook(\"onRequest\", (req, _reply, done) => {\n  runWithRequestContext({ requestId: req.id, method: req.method, route: req.url }, done);\n});",
+        "nextjs": "import { createLogger, runWithRequestContext } from \"@backendfoundry/logger\";\n\nconst logger = createLogger({ service: \"nextjs-route\" });\n\nexport async function POST(req: Request) {\n  return runWithRequestContext({ route: \"/api/checkout\" }, async () => {\n    logger.info(\"Checkout initiated\");\n    return Response.json({ ok: true });\n  });\n}"
+      }
+    },
+    {
+      "id": "ai",
+      "slug": "ai",
+      "name": "AI",
+      "packageName": "@backendfoundry/ai",
+      "displayName": "AI Provider Adapter",
+      "category": "AI Infrastructure",
+      "directory": "packages/ai",
+      "version": "1.0.0",
+      "description": "Unified LLM provider interface with structured schema output validation, streaming chunks, per-attempt timeouts, retry/fallback orchestration, and token accounting.",
+      "install": {
+        "npm": "npm install @backendfoundry/ai",
+        "pnpm": "pnpm add @backendfoundry/ai",
+        "yarn": "yarn add @backendfoundry/ai",
+        "cli": "npx @backendfoundry/cli add ai"
+      },
+      "usage": "import { createAiClient, OpenAiCompatibleProvider, MockAiProvider } from \"@backendfoundry/ai\";\nimport { v } from \"@backendfoundry/validation\";\n\nconst ai = createAiClient({\n  primary: new OpenAiCompatibleProvider({ apiKey: process.env.OPENAI_API_KEY }),\n  fallbacks: [new MockAiProvider({ name: \"local-fallback\" })],\n  maxRetriesPerProvider: 2,\n  timeoutMs: 8_000\n});\n\nconst TicketSchema = v.object({\n  priority: v.enum([\"p0\", \"p1\", \"p2\"]),\n  summary: v.string().min(5)\n});\n\nconst { object, meta } = await ai.generateObject({\n  prompt: \"Summarize outage report\",\n  schema: TicketSchema\n});",
+      "registryDependencies": [
+        "core",
+        "validation",
+        "retry"
+      ],
+      "files": [
+        {
+          "path": "packages/ai/src/index.ts",
+          "target": "ai.ts"
+        }
+      ],
+      "playground": {
+        "scenario": "ai-fallback",
+        "title": "AI client with retries & fallback",
+        "description": "Calls createAiClient() with a primary MockAiProvider that can be flaky or down and an optional fallback. Optionally asks for structured output validated with a schema via generateObject().",
+        "inputs": [
+          {
+            "key": "prompt",
+            "label": "Prompt",
+            "type": "textarea",
+            "default": "Summarize: checkout latency spiked to 4s after the 14:02 deploy."
+          },
+          {
+            "key": "primaryMode",
+            "label": "Primary provider",
+            "type": "select",
+            "default": "flaky",
+            "options": [
+              "healthy",
+              "flaky",
+              "down",
+              "rate_limited"
+            ]
+          },
+          {
+            "key": "primaryFailures",
+            "label": "Failures when flaky",
+            "type": "number",
+            "default": 1,
+            "min": 0,
+            "max": 10
+          },
+          {
+            "key": "maxRetriesPerProvider",
+            "label": "Attempts per provider",
+            "type": "number",
+            "default": 2,
+            "min": 1,
+            "max": 5
+          },
+          {
+            "key": "useFallback",
+            "label": "Configure fallback provider",
+            "type": "boolean",
+            "default": true
+          },
+          {
+            "key": "structured",
+            "label": "Structured output (generateObject)",
+            "type": "boolean",
+            "default": false
+          }
+        ]
+      },
+      "dependencies": {
+        "@backendfoundry/core": "workspace:*",
+        "@backendfoundry/validation": "workspace:*",
+        "@backendfoundry/retry": "workspace:*"
+      },
+      "optionalDependencies": {},
+      "supportedFrameworks": [
+        "Express",
+        "Fastify",
+        "Next.js Route Handlers",
+        "Node.js HTTP"
+      ],
+      "runtimeRequirements": "Node.js >= 18.18.0 (native fetch & AsyncGenerator)",
+      "entryPoints": {
+        "esm": "./dist/index.js",
+        "cjs": "./dist/index.cjs",
+        "types": "./dist/index.d.ts"
+      },
+      "docsRoute": "/packages/ai",
+      "hasPlayground": true,
+      "cli": {
+        "npmInstall": true,
+        "sourceAddSupported": true,
+        "sourceAddReason": "Vendors ai.ts with validation.ts, retry.ts, errors.ts and core.ts.",
+        "targetFile": "src/lib/backendfoundry/ai.ts"
+      },
+      "exportedApis": [
+        {
+          "name": "createAiClient",
+          "kind": "function",
+          "signature": "createAiClient({ primary, fallbacks?, maxRetriesPerProvider?, timeoutMs? })",
+          "description": "Creates a resilient AI client supporting generateText() and schema-validated generateObject()."
+        },
+        {
+          "name": "MockAiProvider",
+          "kind": "class",
+          "signature": "new MockAiProvider(options?)",
+          "description": "Deterministic mock provider for local development, CI tests, and playground fault injection."
+        },
+        {
+          "name": "OpenAiCompatibleProvider",
+          "kind": "class",
+          "signature": "new OpenAiCompatibleProvider(config?)",
+          "description": "Optional HTTP adapter for OpenAI-compatible chat completion APIs."
+        },
+        {
+          "name": "AiProviderError",
+          "kind": "class",
+          "signature": "new AiProviderError(provider, code, message, statusCode?)",
+          "description": "Normalized error across providers (AI_TIMEOUT, AI_RATE_LIMITED, AI_AUTH_ERROR, AI_INVALID_OUTPUT)."
+        }
+      ],
+      "configSchema": [
+        {
+          "option": "primary",
+          "type": "AiProviderAdapter",
+          "default": "required",
+          "required": true,
+          "description": "Primary model provider adapter."
+        },
+        {
+          "option": "fallbacks",
+          "type": "AiProviderAdapter[]",
+          "default": "[]",
+          "required": false,
+          "description": "Ordered fallback providers invoked when the primary provider exhausts retries."
+        },
+        {
+          "option": "maxRetriesPerProvider",
+          "type": "number",
+          "default": "2",
+          "required": false,
+          "description": "Retry attempts per provider before failing over."
+        },
+        {
+          "option": "timeoutMs",
+          "type": "number",
+          "default": "10000",
+          "required": false,
+          "description": "Timeout in milliseconds per provider attempt."
+        }
+      ],
+      "errorBehavior": "Throws AiProviderError; authentication errors (401) skip retries on the misconfigured provider and immediately attempt fallback.",
+      "securityNotes": [
+        "Never hardcode OPENAI_API_KEY or provider secrets in source files; pass keys via server-side environment configuration.",
+        "Always validate structured LLM outputs with generateObject({ schema }) before passing model output to database queries or downstream APIs."
+      ],
+      "limitations": [
+        "Different model providers have distinct tokenization, system prompt behavior, and JSON adherence; fallback models should be tested against the same validation schema."
+      ],
+      "status": {
+        "build": "passing",
+        "tests": "passing",
+        "publicationStatus": "workspace-ready"
+      },
+      "examples": {
+        "basic": "import { createAiClient, OpenAiCompatibleProvider, MockAiProvider } from \"@backendfoundry/ai\";\nimport { v } from \"@backendfoundry/validation\";\n\nconst ai = createAiClient({\n  primary: new OpenAiCompatibleProvider({ apiKey: process.env.OPENAI_API_KEY }),\n  fallbacks: [new MockAiProvider({ name: \"local-fallback\" })],\n  maxRetriesPerProvider: 2,\n  timeoutMs: 8_000\n});\n\nconst TicketSchema = v.object({\n  priority: v.enum([\"p0\", \"p1\", \"p2\"]),\n  summary: v.string().min(5)\n});\n\nconst { object, meta } = await ai.generateObject({\n  prompt: \"Summarize outage report\",\n  schema: TicketSchema\n});",
+        "express": "import { createAiClient, MockAiProvider } from \"@backendfoundry/ai\";\n\nconst ai = createAiClient({ primary: new MockAiProvider() });\n\napp.post(\"/v1/summarize\", async (req, res, next) => {\n  try {\n    const result = await ai.generateText({ prompt: req.body.text });\n    res.json(result);\n  } catch (err) { next(err); }\n});",
+        "fastify": "import { createAiClient, MockAiProvider } from \"@backendfoundry/ai\";\n\nconst ai = createAiClient({ primary: new MockAiProvider() });\n\nfastify.post(\"/v1/summarize\", async (request) => {\n  const { text } = request.body as { text: string };\n  return ai.generateText({ prompt: text });\n});",
+        "nextjs": "import { createAiClient, MockAiProvider } from \"@backendfoundry/ai\";\n\nconst ai = createAiClient({ primary: new MockAiProvider() });\n\nexport async function POST(req: Request) {\n  const { prompt } = await req.json();\n  const res = await ai.generateText({ prompt, signal: req.signal });\n  return Response.json(res);\n}"
+      }
+    }
+  ]
+}

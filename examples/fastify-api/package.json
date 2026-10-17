@@ -1,0 +1,15 @@
+{
+  "name": "@backendfoundry/example-fastify-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@backendfoundry/core": "workspace:*",
+    "@backendfoundry/validation": "workspace:*",
+    "@backendfoundry/rate-limit": "workspace:*",
+    "@backendfoundry/retry": "workspace:*",
+    "@backendfoundry/circuit-breaker": "workspace:*",
+    "@backendfoundry/cache": "workspace:*",
+    "@backendfoundry/errors": "workspace:*"
+  }
+}
