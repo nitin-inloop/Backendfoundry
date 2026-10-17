@@ -77,7 +77,7 @@ export function NavbarClient({ searchItems }: { searchItems: SearchItem[] }) {
       >
         <nav aria-label="Main" className="mx-auto flex h-16 w-full max-w-container items-center gap-6 px-5 sm:px-8">
           <Link href="/" aria-label="BackendFoundry home" className="shrink-0 rounded-sm">
-            <Logo />
+            <Logo tone={solid ? undefined : "dark"} />
           </Link>
 
           <ul className="hidden items-center lg:flex" onMouseLeave={() => setHovered(null)}>
@@ -98,7 +98,11 @@ export function NavbarClient({ searchItems }: { searchItems: SearchItem[] }) {
                     aria-current={active ? "page" : undefined}
                     className={cn(
                       "relative block rounded-md px-3 py-1.5 text-body-sm transition-colors",
-                      active ? "font-medium text-ink" : "text-steel hover:text-ink"
+                      active
+                        ? "font-medium text-ink"
+                        : solid
+                          ? "text-steel hover:text-ink"
+                          : "text-zinc-300 hover:text-white"
                     )}
                   >
                     {item.label}
@@ -115,20 +119,33 @@ export function NavbarClient({ searchItems }: { searchItems: SearchItem[] }) {
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
-              className="hidden h-9 w-[248px] items-center gap-2 rounded-md border border-hairline bg-surface/80 pl-3 pr-1.5 text-body-sm text-steel transition-colors hover:border-stone/50 hover:bg-surface md:flex"
+              className={cn(
+                "hidden h-9 w-[220px] lg:w-[260px] items-center gap-2 rounded-md border pl-3 pr-2 text-xs transition-colors md:flex",
+                solid
+                  ? "border-hairline bg-surface/80 text-steel hover:border-stone/50 hover:bg-surface"
+                  : "border-white/10 bg-black/50 text-zinc-400 hover:border-white/20 hover:bg-black/70 hover:text-zinc-200 backdrop-blur-sm"
+              )}
               aria-label="Search documentation and components"
               aria-keyshortcuts="Meta+K Control+K"
             >
-              <Search className="h-4 w-4" aria-hidden="true" />
-              <span className="flex-1 text-left">Search...</span>
-              <kbd className="rounded-xs border border-hairline bg-canvas px-1.5 py-0.5 font-mono text-micro text-steel">
+              <Search className="h-3.5 w-3.5 shrink-0 text-zinc-400" aria-hidden="true" />
+              <span className="flex-1 truncate whitespace-nowrap text-left text-zinc-400">Search documentation...</span>
+              <kbd
+                className={cn(
+                  "shrink-0 rounded-xs border px-1.5 py-0.5 font-mono text-micro leading-none",
+                  solid ? "border-hairline bg-canvas text-steel" : "border-white/15 bg-white/10 text-zinc-300"
+                )}
+              >
                 {isMac ? "⌘K" : "Ctrl K"}
               </kbd>
             </button>
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
-              className="grid h-9 w-9 place-items-center rounded-full border border-hairline bg-canvas text-ink md:hidden"
+              className={cn(
+                "grid h-9 w-9 place-items-center rounded-full border md:hidden",
+                solid ? "border-hairline bg-canvas text-ink" : "border-white/10 bg-black/40 text-zinc-200"
+              )}
               aria-label="Search documentation and components"
             >
               <Search className="h-4 w-4" aria-hidden="true" />
@@ -138,13 +155,27 @@ export function NavbarClient({ searchItems }: { searchItems: SearchItem[] }) {
               target="_blank"
               rel="noreferrer"
               aria-label="BackendFoundry on GitHub"
-              className="hidden h-9 w-9 place-items-center rounded-full border border-hairline bg-canvas text-ink transition-colors hover:bg-surface sm:grid"
+              className={cn(
+                "hidden h-9 w-9 place-items-center rounded-full border transition-colors sm:grid",
+                solid
+                  ? "border-hairline bg-canvas text-ink hover:bg-surface"
+                  : "border-white/10 bg-black/40 text-zinc-300 hover:border-white/20 hover:bg-black/60 hover:text-white backdrop-blur-sm"
+              )}
             >
               <Github className="h-4 w-4" aria-hidden="true" />
             </a>
             <ThemeToggle className="hidden sm:inline-flex" />
-            <Button href="/docs/getting-started" size="sm" className="hidden h-9 px-4 sm:inline-flex">
-              Get started
+            <Button
+              href="/docs/installation"
+              size="sm"
+              className={cn(
+                "hidden h-9 px-4 sm:inline-flex rounded-md font-medium transition-all",
+                solid
+                  ? ""
+                  : "border border-white/20 bg-white text-neutral-950 hover:bg-zinc-200 shadow-sm"
+              )}
+            >
+              + Install
             </Button>
             <button
               type="button"

@@ -21,6 +21,7 @@ import { ComponentsBento } from "../components/site/landing/components-bento";
 import { FrameworkStrip } from "../components/site/landing/framework-strip";
 import { PipelineDemo } from "../components/site/landing/pipeline-demo";
 import { HeroBackdrop } from "../components/site/landing/hero-backdrop";
+import { HeroTerminal } from "../components/site/landing/hero-terminal";
 import { getSiteComponents } from "../components/site/registry-items";
 import { INSTALL_COMMAND } from "../components/site/site-config";
 
@@ -77,53 +78,82 @@ export default function HomePage() {
   return (
     <main>
       {/* Hero */}
-      <section aria-labelledby="hero-title" className="relative -mt-16 overflow-hidden pt-16">
+      <section aria-labelledby="hero-title" className="relative -mt-16 overflow-hidden bg-[#06090e] pt-16">
         <HeroBackdrop />
-        <Container className="relative pb-16 pt-14 md:pb-24 md:pt-24">
-          <div className="dark mx-auto max-w-[920px] text-center">
-            <div className="bf-rise">
-              <Link
-                href="/changelog"
-                className="group inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/55 py-1 pl-1 pr-3 text-caption text-slate shadow-subtle backdrop-blur-md transition-colors hover:bg-white/75 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
-              >
-                <span className="rounded-full bg-primary px-2 py-0.5 text-micro font-medium text-on-primary">v1.0.0</span>
-                {count} components, MIT licensed
-                <ChevronRight className="h-3.5 w-3.5 text-steel transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-              </Link>
-            </div>
-            <div className="bf-rise [animation-delay:60ms]">
-              <h1
-                id="hero-title"
-                className="mt-7 text-balance text-[40px] font-semibold leading-[1.05] tracking-[-1.2px] text-ink sm:text-[56px] sm:tracking-[-1.5px] lg:text-hero-display"
-              >
-                Production backend blocks, as code you own.
-              </h1>
-            </div>
-            <div className="bf-rise [animation-delay:120ms]">
-              <p className="mx-auto mt-6 max-w-[640px] text-pretty text-subtitle text-slate">
-                Rate limiting, validation, idempotency, retries and eight more typed TypeScript components. Install them
-                from npm, or copy the source into your repo with one command.
-              </p>
-            </div>
-            <div className="bf-rise [animation-delay:180ms]">
-              <div className="mx-auto mt-9 flex max-w-[760px] flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-center">
-                <CommandLine
-                  command={INSTALL_COMMAND}
-                  className="border-white/70 bg-white/70 shadow-subtle backdrop-blur-md dark:border-white/10 dark:bg-white/5 md:w-[420px]"
-                />
-                <div className="flex gap-3">
-                  <Button href="/packages" className="h-11 flex-1 px-5 sm:flex-none">
-                    Browse components
-                  </Button>
-                  <Button href="/docs/getting-started" variant="secondary" className="h-11 flex-1 border-white/70 bg-white/50 px-5 dark:border-white/15 dark:bg-white/5 sm:flex-none">
-                    Quick start
-                  </Button>
+        <Container className="relative pb-16 pt-12 md:pb-24 md:pt-20 lg:pt-24">
+          <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-8">
+            {/* Left Content Column */}
+            <div className="lg:col-span-7">
+              <div className="bf-rise">
+                <Link
+                  href="/changelog"
+                  className="group inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/40 py-1 pl-2.5 pr-3 text-caption text-emerald-300 shadow-sm backdrop-blur-md transition-all hover:border-emerald-500/50 hover:bg-emerald-900/40"
+                >
+                  <span className="flex h-2 w-2 items-center justify-center">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  </span>
+                  <span className="font-semibold text-emerald-300">v1.0</span>
+                  <span className="text-emerald-500/60">•</span>
+                  <span className="text-emerald-100/90 font-normal">
+                    New: AI, Idempotency, Rate Limit & Cache – {count} components
+                  </span>
+                  <ArrowRight className="h-3.5 w-3.5 text-emerald-400 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                </Link>
+              </div>
+
+              <div className="bf-rise [animation-delay:60ms]">
+                <h1
+                  id="hero-title"
+                  className="mt-6 text-balance text-4xl font-semibold leading-[1.06] tracking-[-1.5px] text-white sm:text-5xl lg:text-[54px] xl:text-[62px]"
+                >
+                  Backend primitives forged for production TypeScript
+                </h1>
+              </div>
+
+              <div className="bf-rise [animation-delay:120ms]">
+                <p className="mt-5 max-w-[560px] text-pretty text-subtitle text-zinc-300 leading-relaxed">
+                  {count} modular backend components across 5 collections. Copy the source with
+                  one CLI command or import the package — every component is typed, SSR-safe,
+                  and respects zero runtime dependencies.
+                </p>
+              </div>
+
+              <div className="bf-rise [animation-delay:180ms]">
+                <div className="mt-8 flex flex-wrap items-center gap-3.5">
+                  <Link
+                    href="/packages"
+                    className="inline-flex h-11 items-center justify-center rounded-lg bg-white px-6 text-sm font-semibold text-neutral-950 shadow-sm transition-all hover:bg-neutral-100 hover:shadow-md"
+                  >
+                    Explore {count} Components
+                  </Link>
+                  <Link
+                    href="/changelog"
+                    className="inline-flex h-11 items-center justify-center rounded-lg border border-white/15 bg-white/[0.08] px-6 text-sm font-medium text-white shadow-sm backdrop-blur-md transition-all hover:border-white/30 hover:bg-white/[0.14]"
+                  >
+                    What's new in v1.0
+                  </Link>
                 </div>
               </div>
             </div>
+
+            {/* Right Terminal Column */}
+            <div className="bf-rise [animation-delay:200ms] lg:col-span-5">
+              <HeroTerminal />
+            </div>
           </div>
 
-          <div className="bf-rise mx-auto mt-14 max-w-[1080px] [animation-delay:300ms] [animation-duration:900ms] md:mt-20">
+          {/* Interactive Pipeline Trace Showcase */}
+          <div className="bf-rise mx-auto mt-20 max-w-[1080px] [animation-delay:280ms] [animation-duration:900ms] md:mt-28">
+            <div className="mb-4 flex items-center justify-between px-2">
+              <div className="flex items-center gap-2 text-caption text-zinc-400">
+                <span className="h-2 w-2 rounded-full bg-brand-green" />
+                <span className="font-medium text-zinc-200">Interactive Pipeline</span>
+                <span className="hidden text-zinc-500 sm:inline">— Trace one request through rate-limit, validation & idempotency</span>
+              </div>
+              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-micro font-medium uppercase tracking-wider text-zinc-400">
+                Live Trace
+              </span>
+            </div>
             <PipelineDemo />
           </div>
         </Container>

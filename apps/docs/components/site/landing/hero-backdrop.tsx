@@ -2,16 +2,16 @@ import Image from "next/image";
 import heroImage from "../../../public/hero-bg.png";
 
 /**
- * <HeroBackdrop> — photographic background for the landing hero (public/hero-bg.png).
- * The photo drifts in a slow Ken Burns zoom (frozen under prefers-reduced-motion via globals.css),
- * sits under a dark scrim so the light hero copy stays legible, and its bottom edge is masked out
- * so it dissolves into whichever page canvas (light or dark) sits behind it. Purely decorative.
+ * <HeroBackdrop> — cinematic photographic background for the landing hero.
+ * Renders the glowing portal and pine forest with atmospheric god rays,
+ * layered with subtle contrast gradients for the headline and navbar,
+ * smoothly dissolving into the page canvas at the bottom.
  */
-export function HeroBackdrop() {
+export function HeroBackdrop({ className }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 top-0 h-[min(100%,900px)] overflow-hidden [mask-image:linear-gradient(to_bottom,black_62%,transparent)] md:h-[calc(100%-260px)] md:[mask-image:linear-gradient(to_bottom,black_72%,transparent)]"
+      className={`pointer-events-none absolute inset-0 overflow-hidden [mask-image:linear-gradient(to_bottom,black_82%,transparent)] ${className || ""}`}
     >
       <div className="absolute inset-0 animate-ken-burns">
         <Image
@@ -21,12 +21,21 @@ export function HeroBackdrop() {
           priority
           placeholder="blur"
           sizes="100vw"
-          className="object-cover object-[50%_40%]"
+          className="object-cover object-[50%_38%]"
         />
       </div>
-      {/* Scrim: darker at the top (navbar) and behind the headline, lighter where the scene shows through. */}
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,12,16,0.72)_0%,rgba(5,12,16,0.48)_38%,rgba(5,12,16,0.58)_100%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(60%_48%_at_50%_38%,rgba(5,12,16,0.5),transparent)]" />
+
+      {/* Top navbar scrim */}
+      <div className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-[#05070a]/90 via-[#05070a]/45 to-transparent" />
+
+      {/* Left-side text readability scrim */}
+      <div className="absolute inset-y-0 left-0 w-full lg:w-[62%] bg-gradient-to-r from-[#05070a]/95 via-[#05070a]/70 to-transparent" />
+
+      {/* Ambient dark vignette surrounding the portal */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_65%_at_50%_40%,transparent_45%,rgba(5,7,10,0.65)_100%)]" />
+
+      {/* Bottom dissolve into canvas */}
+      <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-canvas via-canvas/70 to-transparent" />
     </div>
   );
 }
