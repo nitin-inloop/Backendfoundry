@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   },
   description:
     "Typed, tested TypeScript modules for rate limiting, validation, retries, circuit breakers, caching, idempotency, webhooks, health checks, errors, logging and AI providers. Install the package or copy the source.",
-  icons: { icon: "/favicon.svg" }
+  icons: { icon: "/logo.png", shortcut: "/logo.png", apple: "/logo.png" }
 };
 
 export const viewport: Viewport = {

@@ -1,23 +1,23 @@
-/**
- * <Logo> — the BackendFoundry mark: three outlined blocks and one solid mint block ("built in blocks").
- * Props: withWordmark?: boolean (default true), tone?: "light" | "dark" (dark = for dark bands), className?
- */
+import Image from "next/image";
 import { cn } from "../ui/cn";
 
 export function LogoMark({ className, tone = "light" }: { className?: string; tone?: "light" | "dark" }) {
-  const stroke = "currentColor";
   return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className={cn("h-[22px] w-[22px]", tone === "dark" ? "text-on-dark" : "text-ink", className)}
-      fill="none"
+    <span
+      className={cn(
+        "relative inline-flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-lg shadow-sm border border-white/10 bg-white/5",
+        className
+      )}
     >
-      <rect x="2.75" y="2.75" width="8" height="8" rx="2" stroke={stroke} strokeWidth="1.5" />
-      <rect x="13.25" y="2.75" width="8" height="8" rx="2" stroke={stroke} strokeWidth="1.5" />
-      <rect x="2.75" y="13.25" width="8" height="8" rx="2" stroke={stroke} strokeWidth="1.5" />
-      <rect x="12.5" y="12.5" width="9.5" height="9.5" rx="2.25" fill="#00d4a4" />
-    </svg>
+      <Image
+        src="/logo.png"
+        alt="BackendFoundry logo"
+        width={28}
+        height={28}
+        className="h-full w-full object-cover"
+        priority
+      />
+    </span>
   );
 }
 
@@ -31,7 +31,7 @@ export function Logo({
   className?: string;
 }) {
   return (
-    <span className={cn("inline-flex items-center gap-2", className)}>
+    <span className={cn("inline-flex items-center gap-2.5", className)}>
       <LogoMark tone={tone} />
       {withWordmark && (
         <span className={cn("text-[16px] font-semibold tracking-[-0.3px]", tone === "dark" ? "text-on-dark" : "text-ink")}>
